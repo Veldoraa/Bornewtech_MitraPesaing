@@ -113,5 +113,8 @@
     <string name="otw"><![CDATA[Sedang Dalam Perjalanan]]></string>
     <string name="list_of_category">List of Category</string>
     <string name="best_seller">Penjualan Terlaku</string>
+    <string name="title_barang_pedagang">Barang Anda</string>
+    <string name="riwayat_pesanan">Pesanan Masuk</string>
+    <string name="akun_pedagang">Akun Anda</string>
 
 </resources>

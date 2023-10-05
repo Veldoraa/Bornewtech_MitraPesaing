@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/home_pedagang"
+        android:icon="@drawable/ic_home_black_24dp"
+        android:title="@string/title_home" />
+    <item
+        android:id="@+id/barang_pedagang"
+        android:icon="@drawable/product"
+        android:title="@string/title_barang_pedagang"/>
+    <item
+        android:id="@+id/pesanan_pedagang"
+        android:icon="@drawable/riwayat"
+        android:title="@string/riwayat_pesanan"/>
+    <item
+        android:id="@+id/akun_pedagang"
+        android:icon="@drawable/person"
+        android:title="@string/akun_pedagang"/>
+</menu>

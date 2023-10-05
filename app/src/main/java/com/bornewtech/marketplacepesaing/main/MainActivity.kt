@@ -24,6 +24,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var btnListBarang : Button
     lateinit var btnMaps: Button
     lateinit var dashboardPembeli: Button
+    lateinit var btnKeDashboardPedagang: Button
 
     val firebaseAuth = FirebaseAuth.getInstance()
 
