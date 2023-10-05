@@ -1,146 +1,163 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.register.RegisterPembeli">
+    tools:context=".ui.register.RegisterPedagang">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:fontFamily="@font/roboto_bold"
-        android:textColor="@android:color/black"
-        android:text="@string/title_activity_register"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:src="@drawable/mobile_register_img"
-        app:layout_constraintBottom_toTopOf="@id/guideline_top_image"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/name_textInputLayout"
-        style="@style/OutlinedRoundedBox"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:layout_marginEnd="30dp"
-        android:hint="@string/name_string"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/guideline_top_image"
-        app:layout_constraintBottom_toTopOf="@id/phone_textInputLayout"
-        app:startIconDrawable="@drawable/ic_outline_person_24">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/tv_nameusers"
+        android:orientation="vertical">
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textPersonName" />
+            android:layout_marginTop="10dp"
+            android:text="@string/title_activity_register"
+            android:fontFamily="@font/roboto_bold"
+            android:textColor="@android:color/black"
+            android:textSize="24sp"
+            android:textAlignment="center"/>
 
-    </com.google.android.material.textfield.TextInputLayout>
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:src="@drawable/mobile_register_img"/>
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/phone_textInputLayout"
-        style="@style/OutlinedRoundedBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:layout_marginEnd="30dp"
-        android:hint="@string/phone_num_string"
-
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/name_textInputLayout"
-        app:layout_constraintBottom_toTopOf="@id/email_textInputLayout"
-        app:startIconDrawable="@drawable/ic_outline_phone_24">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/tv_phone"
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/OutlinedRoundedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="phone" />
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="30dp"
+            android:hint="@string/name_string"
+            app:startIconDrawable="@drawable/ic_outline_person_24">
+            <EditText
+                android:id="@+id/tv_pembeliname"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"/>
+        </com.google.android.material.textfield.TextInputLayout>
 
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/email_textInputLayout"
-        style="@style/OutlinedRoundedBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:layout_marginEnd="30dp"
-        android:hint="@string/email_string"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/phone_textInputLayout"
-        app:layout_constraintBottom_toTopOf="@id/password_textInputLayout"
-        app:startIconDrawable="@drawable/ic_outline_email_24">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/tv_email"
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/OutlinedRoundedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textEmailAddress" />
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="30dp"
+            android:hint="@string/phone_num_string"
+            app:startIconDrawable="@drawable/ic_outline_phone_24">
+            <EditText
+                android:id="@+id/tv_pembeliphone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="phone"/>
+        </com.google.android.material.textfield.TextInputLayout>
 
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/password_textInputLayout"
-        style="@style/OutlinedRoundedBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:layout_marginEnd="30dp"
-        android:hint="@string/password_string"
-        app:endIconMode="password_toggle"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/email_textInputLayout"
-        app:layout_constraintBottom_toTopOf="@id/guideline_top_login"
-        app:startIconDrawable="@drawable/ic_outline_lock_24">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/tv_password"
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/OutlinedRoundedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textPassword" />
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="30dp"
+            android:hint="@string/address_string"
+            app:startIconDrawable="@drawable/alamat">
+            <EditText
+                android:id="@+id/tv_pembelialamat"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textEmailAddress"/>
+        </com.google.android.material.textfield.TextInputLayout>
 
-    </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/OutlinedRoundedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="30dp"
+            android:hint="@string/email_string"
+            app:startIconDrawable="@drawable/ic_outline_email_24">
+            <EditText
+                android:id="@+id/tv_pembeliemail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textEmailAddress"/>
+        </com.google.android.material.textfield.TextInputLayout>
 
-    <Button
-        android:id="@+id/btn_register"
-        style="@style/OutlinedRoundedBox"
-        android:layout_width="0dp"
-        android:layout_height="60dp"
-        android:layout_marginStart="30dp"
-        android:layout_marginEnd="30dp"
-        android:layout_marginBottom="20dp"
-        android:textSize="18sp"
-        android:fontFamily="@font/roboto_bold"
-        android:text="@string/title_activity_register"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/OutlinedRoundedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="30dp"
+            android:hint="@string/password_string"
+            app:startIconDrawable="@drawable/ic_outline_lock_24"
+            app:passwordToggleEnabled="true">
+            <EditText
+                android:id="@+id/tv_pembelipassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"/>
+        </com.google.android.material.textfield.TextInputLayout>
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline_top_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_begin="257dp" />
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/OutlinedRoundedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="30dp"
+            android:hint="@string/confirm_password"
+            app:startIconDrawable="@drawable/ic_outline_lock_24"
+            app:passwordToggleEnabled="true">
+            <EditText
+                android:id="@+id/tv_confirmpembelipassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"/>
+        </com.google.android.material.textfield.TextInputLayout>
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline_top_login"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.85" />
+        <Button
+            android:id="@+id/btn_register_pembeli"
+            style="@style/OutlinedRoundedBox"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="30dp"
+            android:textSize="18sp"
+            android:fontFamily="@font/roboto_bold"
+            android:text="@string/title_activity_register"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/text_milikakun"
+            android:textAlignment="center"/>
+
+        <TextView
+            android:id="@+id/btn_loginPembeli"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/roboto_bold"
+            android:textSize="16sp"
+            android:textColor="@color/green_pesaing"
+            android:text="@string/text_login"
+            android:layout_marginBottom="20dp"
+            android:textAlignment="center"/>
+    </LinearLayout>
+
+</ScrollView>

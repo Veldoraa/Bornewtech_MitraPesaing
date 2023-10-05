@@ -80,4 +80,10 @@
     <string name="title_barang_pedagang">Barang Anda</string>
     <string name="riwayat_pesanan">Pesanan Masuk</string>
     <string name="akun_pedagang">Akun Anda</string>
+    <string name="btn_finish_regis_Pembeli">Masuk Sebagai Pembeli</string>
+    <string name="btn_finish_regis_Pedagang">Masuk Sebagai Pedagang</string>
+    <string name="txt_to_loginPembeli">Masuk Sebagai Pembeli</string>
+    <string name="txt_to_loginPedagang">Masuk Sebagai Pedagang</string>
+    <string name="text_login">Login</string>
+    <string name="address_string">Masukkan Alamat</string>
 </resources>
