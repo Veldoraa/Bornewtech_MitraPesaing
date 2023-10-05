@@ -15,5 +15,5 @@
 
     <item android:title="@string/account"
         android:id="@+id/akun"
-        android:icon="@drawable/baseline_person_24"/>
+        android:icon="@drawable/person"/>
 </menu>
