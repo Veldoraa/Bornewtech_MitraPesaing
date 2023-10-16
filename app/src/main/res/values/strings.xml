@@ -23,6 +23,11 @@
     <string name="title_home">Beranda</string>
     <string name="title_barang_pedagang">Produk Mu</string>
     <string name="Maps">Peta</string>
-    <string name="riwayat_pesanan">Riwayat Pesanan</string>
+    <string name="riwayat_pesanan">Pesanan</string>
     <string name="akun_pedagang">Akun Mu</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="text_daftarkan_barang">Ingin Masukkan Barang?</string>
+    <string name="text_mp_btn">Masukkan Barang</string>
+    <string name="text_lapak">Lapak Ku</string>
 </resources>
