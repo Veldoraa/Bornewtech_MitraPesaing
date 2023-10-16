@@ -9,5 +9,24 @@
         android:id="@+id/navigation_homeFragment"
         android:name="com.bornewtech.mitrapesaing.ui.fragment.home.HomeFragment"
         android:label="fragment_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_navigation_homeFragment_to_navigation_inputBarangActivity"
+            app:destination="@id/navigation_inputBarangActivity" />
+    </fragment>
+    <activity
+        android:id="@+id/navigation_profilActivity"
+        android:name="com.bornewtech.mitrapesaing.ui.profile.Profil"
+        android:label="Profil"
+        tools:layout="@layout/activity_profil"/>
+    <activity
+        android:id="@+id/navigation_inputBarangActivity"
+        android:name="com.bornewtech.mitrapesaing.ui.barang.InputBarang"
+        android:label="activity_input_barang"
+        tools:layout="@layout/activity_input_barang" />
+    <activity
+        android:id="@+id/navigation_mapsActivity"
+        android:name="com.bornewtech.mitrapesaing.maps.Maps"
+        android:label="activity_maps"
+        tools:layout="@layout/activity_maps" />
 </navigation>

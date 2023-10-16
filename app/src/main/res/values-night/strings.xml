@@ -28,4 +28,25 @@
     <string name="text_daftarkan_barang">Ingin Masukkan Barang?</string>
     <string name="text_mp_btn">Masukkan Barang</string>
     <string name="text_lapak">Lapak Ku</string>
+    <string name="tombol_back">Tombol Kembali</string>
+    <string name="profil_saya">Profil Ku</string>
+    <string name="nama_pdg">Nama Pedagang</string>
+    <string name="no_pdg">No Hp/WA Pedagang</string>
+    <string name="tombol_edit">Tombol Edit</string>
+    <string name="txt_akun_pdg">Akun Pedagang</string>
+    <string name="riwayat_pesanan_pdg">Riwayat Pesanan</string>
+    <string name="saldo_pdg">Saldo Ku</string>
+    <string name="ganti_pass_pdg">Ganti Kata Sandi</string>
+    <string name="logout_pdg">Keluar Dari Akun</string>
+    <string name="daftarkan_produk">Masukkan Produk Kamu</string>
+    <string name="inp_image">Ini Akan Menampilkan Gambar</string>
+    <string name="camera">Kamera</string>
+    <string name="gallery">Galeri</string>
+    <string name="nama_barang">Nama Produk</string>
+    <string name="kategori">Kategori</string>
+    <string name="satuan">Satuan</string>
+    <string name="harga">Harga Produk</string>
+    <string name="share_my_location">Bagikan Lokasi Saya Sekarang</string>
+    <string name="inp_product">Masukkan</string>
+    <string name="nameproduct">Nama Produk</string>
 </resources>
