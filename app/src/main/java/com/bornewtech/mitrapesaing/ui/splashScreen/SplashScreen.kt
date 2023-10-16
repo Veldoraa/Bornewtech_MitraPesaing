@@ -1,12 +1,29 @@
 package com.bornewtech.mitrapesaing.ui.splashScreen
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.bornewtech.mitrapesaing.R
+import android.os.Handler
+import android.os.Looper
+import com.bornewtech.mitrapesaing.databinding.ActivitySplashScreenBinding
+import com.bornewtech.mitrapesaing.main.MainActivity
 
 class SplashScreen : AppCompatActivity() {
+    private lateinit var binding: ActivitySplashScreenBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_splash_screen)
+        binding = ActivitySplashScreenBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        supportActionBar?.hide()
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            val intent = Intent(this@SplashScreen, MainActivity::class.java)
+            startActivity(intent)
+            overridePendingTransition(androidx.constraintlayout.widget.R.anim.abc_fade_in, androidx.constraintlayout.widget.R.anim.abc_fade_out)
+        }, limit)
+    }
+
+    companion object{
+        private const val limit=3000L
     }
 }
