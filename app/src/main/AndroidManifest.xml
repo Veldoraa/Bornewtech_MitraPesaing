@@ -13,6 +13,15 @@
         android:theme="@style/Theme.MitraPesaing"
         tools:targetApi="31">
         <activity
+            android:name=".ui.login.Login"
+            android:exported="false" />
+        <activity
+            android:name=".ui.register.Registrasi"
+            android:exported="false" />
+        <activity
+            android:name=".ui.login.PraLogin"
+            android:exported="false" />
+        <activity
             android:name=".ui.splashScreen.SplashScreen"
             android:exported="true">
             <intent-filter>
@@ -23,8 +32,7 @@
         </activity>
         <activity
             android:name=".main.MainActivity"
-            android:exported="false">
-        </activity>
+            android:exported="false" />
     </application>
 
 </manifest>

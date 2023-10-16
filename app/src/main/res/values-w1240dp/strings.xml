@@ -2,4 +2,27 @@
 <resources>
     <string name="app_name">Mitra Pesaing</string>
     <string name="splashscreen">Gambar Splash Screen</string>
+    <string name="image_pralogin">Image Pra Login</string>
+    <string name="txt_pre_login">Haloo! Selamat Datang Mitra PESAING</string>
+    <string name="title_activity_register">Daftar Sekarang</string>
+    <string name="txt_pre_login2">Anda Sudah Memiliki Akun Ya?</string>
+    <string name="txt_to_loginPedagang">Masuk</string>
+    <string name="txt_hak_cipta">Hak Cipta Oleh PT. Bornewtech</string>
+    <string name="txt_version">v0.1</string>
+    <string name="name_string">Nama Lengkap</string>
+    <string name="phone_num_string">No Hp/WA</string>
+    <string name="email_string">Email Aktif</string>
+    <string name="password_string">Kata Sandi</string>
+    <string name="confirm_password">Konfirmasi Kata Sandi</string>
+    <string name="text_punyaakun">Sudah Punya Akun?</string>
+    <string name="login_button">Masuk</string>
+    <string name="button_Google">Masuk Dengan Akun Google</string>
+    <string name="title_Login">Masuk</string>
+    <string name="text_milikakun">Anda Tidak Punya Akun</string>
+    <string name="text_regis">Daftar</string>
+    <string name="title_home">Beranda</string>
+    <string name="title_barang_pedagang">Produk Mu</string>
+    <string name="Maps">Peta</string>
+    <string name="riwayat_pesanan">Riwayat Pesanan</string>
+    <string name="akun_pedagang">Akun Mu</string>
 </resources>
