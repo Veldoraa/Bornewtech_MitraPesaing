@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.bornewtech.mitrapesaing.R
 import com.bornewtech.mitrapesaing.databinding.ActivityMainBinding
+import com.bornewtech.mitrapesaing.maps.Maps
 import com.bornewtech.mitrapesaing.ui.fragment.home.HomeFragment
 import com.bornewtech.mitrapesaing.ui.profile.Profil
 
@@ -30,8 +31,8 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 R.id.maps_pedagang -> {
-//                    val intent = Intent(this, Maps::class.java)
-//                    startActivity(intent)
+                    val intent = Intent(this, Maps::class.java)
+                    startActivity(intent)
                 }
 
                 R.id.pesanan_pedagang -> {

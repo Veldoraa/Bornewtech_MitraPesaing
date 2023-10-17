@@ -1,5 +1,6 @@
 package com.bornewtech.mitrapesaing.ui.splashScreen
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -8,6 +9,7 @@ import android.os.Looper
 import com.bornewtech.mitrapesaing.databinding.ActivitySplashScreenBinding
 import com.bornewtech.mitrapesaing.main.MainActivity
 
+@SuppressLint("CustomSplashScreen")
 class SplashScreen : AppCompatActivity() {
     private lateinit var binding: ActivitySplashScreenBinding
     override fun onCreate(savedInstanceState: Bundle?) {
