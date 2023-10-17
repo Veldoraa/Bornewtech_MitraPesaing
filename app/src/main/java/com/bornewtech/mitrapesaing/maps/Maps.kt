@@ -2,7 +2,9 @@ package com.bornewtech.mitrapesaing.maps
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.core.content.ContextCompat
 import com.bornewtech.mitrapesaing.R
+import com.bornewtech.mitrapesaing.data.maps.Constants
 
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -11,6 +13,8 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.bornewtech.mitrapesaing.databinding.ActivityMapsBinding
+import com.google.android.gms.maps.model.TileOverlayOptions
+import com.google.maps.android.heatmaps.HeatmapTileProvider
 
 class Maps : AppCompatActivity(), OnMapReadyCallback {
 
@@ -45,5 +49,15 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
         val sydney = LatLng(-34.0, 151.0)
         mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
+
+//        addHeatmap()
     }
+
+//    private fun addHeatmap() {
+//        val heatmapProvider = HeatmapTileProvider.Builder()
+//            .data(Constants.getHeatmapData())
+//            .radius(20)
+//            .build()
+//        mMap.addTileOverlay(TileOverlayOptions().tileProvider(heatmapProvider))
+//    }
 }

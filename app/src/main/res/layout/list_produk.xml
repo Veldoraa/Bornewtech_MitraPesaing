@@ -24,7 +24,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/tv_namaBarangRV"
+        android:id="@+id/namaBarang"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
@@ -40,7 +40,7 @@
         tools:text="Nama" />
 
     <TextView
-        android:id="@+id/tv_stokRV"
+        android:id="@+id/stokBarang"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
@@ -50,11 +50,11 @@
         android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/img_barangRV"
-        app:layout_constraintTop_toBottomOf="@+id/tv_namaBarangRV"
+        app:layout_constraintTop_toBottomOf="@+id/namaBarang"
         tools:text="Stok" />
 
     <TextView
-        android:id="@+id/tv_hargaBarangRV"
+        android:id="@+id/hargaBarang"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
