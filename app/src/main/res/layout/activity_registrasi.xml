@@ -26,6 +26,7 @@
             android:src="@drawable/mobile_register_img"/>
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilname"
             style="@style/OutlinedRoundedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -36,13 +37,14 @@
             android:hint="@string/name_string"
             app:startIconDrawable="@drawable/ic_outline_person_24">
             <EditText
-                android:id="@+id/tv_mitraname"
+                android:id="@+id/et_mitraname"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPersonName"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilphone"
             style="@style/OutlinedRoundedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -53,13 +55,14 @@
             android:hint="@string/phone_num_string"
             app:startIconDrawable="@drawable/ic_outline_phone_24">
             <EditText
-                android:id="@+id/tv_mitraphone"
+                android:id="@+id/et_mitraphone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="phone"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilemail"
             style="@style/OutlinedRoundedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -70,13 +73,14 @@
             android:hint="@string/email_string"
             app:startIconDrawable="@drawable/ic_outline_email_24">
             <EditText
-                android:id="@+id/tv_mitraemail"
+                android:id="@+id/et_mitraemail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textEmailAddress"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilpassword"
             style="@style/OutlinedRoundedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -88,13 +92,14 @@
             app:startIconDrawable="@drawable/ic_outline_lock_24"
             app:passwordToggleEnabled="true">
             <EditText
-                android:id="@+id/tv_mitrapassword"
+                android:id="@+id/et_mitrapassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPassword"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilkonfirmpassword"
             style="@style/OutlinedRoundedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -106,7 +111,7 @@
             app:startIconDrawable="@drawable/ic_outline_lock_24"
             app:passwordToggleEnabled="true">
             <EditText
-                android:id="@+id/tv_confirmmitrapassword"
+                android:id="@+id/et_confirmmitrapassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPassword"/>

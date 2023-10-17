@@ -8,6 +8,7 @@ import android.os.Handler
 import android.os.Looper
 import com.bornewtech.mitrapesaing.databinding.ActivitySplashScreenBinding
 import com.bornewtech.mitrapesaing.main.MainActivity
+import com.bornewtech.mitrapesaing.ui.login.PraLogin
 
 @SuppressLint("CustomSplashScreen")
 class SplashScreen : AppCompatActivity() {
@@ -19,7 +20,7 @@ class SplashScreen : AppCompatActivity() {
         supportActionBar?.hide()
 
         Handler(Looper.getMainLooper()).postDelayed({
-            val intent = Intent(this@SplashScreen, MainActivity::class.java)
+            val intent = Intent(this@SplashScreen, PraLogin::class.java)
             startActivity(intent)
             overridePendingTransition(androidx.constraintlayout.widget.R.anim.abc_fade_in, androidx.constraintlayout.widget.R.anim.abc_fade_out)
         }, limit)
