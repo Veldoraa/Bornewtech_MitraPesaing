@@ -29,7 +29,7 @@
             app:cardCornerRadius="8dp"
             android:layout_marginTop="26dp">
             <ImageView
-                android:id="@+id/inp_imgBarang"
+                android:id="@+id/ivgambarBarang"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:src="@drawable/baseline_image_24"

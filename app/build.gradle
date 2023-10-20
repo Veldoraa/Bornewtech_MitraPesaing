@@ -61,23 +61,27 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 
-
-    // google maps
     //circle imageview
     implementation 'de.hdodenhof:circleimageview:3.1.0'
     // splash screens
     implementation 'androidx.core:core-splashscreen:1.0.1'
 
+
+    /** === GOOGLE MAPS === **/
+    // maps
+    implementation 'com.google.android.gms:play-services-maps:18.1.0'
+    // maps utils
+    implementation 'com.google.maps.android:android-maps-utils:3.4.0'
+
+
+    /** === FIREBASE === **/
     // Import the BoM for the Firebase platform
     implementation(platform("com.google.firebase:firebase-bom:32.3.1"))
     implementation 'com.google.firebase:firebase-analytics-ktx'
-    // maps
-    implementation 'com.google.android.gms:play-services-maps:18.1.0'
     // firebase auth
     implementation("com.google.firebase:firebase-auth-ktx")
-    // maps utils
-    implementation 'com.google.maps.android:android-maps-utils:3.4.0'
     // firestore
     implementation 'com.google.firebase:firebase-firestore-ktx:24.8.1'
-
+    // firebase Storage
+    implementation 'com.google.firebase:firebase-storage-ktx:20.2.1'
 }

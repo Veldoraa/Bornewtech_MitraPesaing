@@ -13,19 +13,27 @@ import com.bornewtech.mitrapesaing.data.camera.utility.getImageUri
 import com.bornewtech.mitrapesaing.databinding.ActivityInputBarangBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 
 class InputBarang : AppCompatActivity() {
     private lateinit var binding: ActivityInputBarangBinding
     private var currentImageUri: Uri? = null
     private var dbBarang = Firebase.firestore
+    private lateinit var storageRef: StorageReference
+    private lateinit var firebaseFirestore: FirebaseFirestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityInputBarangBinding.inflate(layoutInflater)
         setContentView(binding.root)
         supportActionBar?.hide()
+
+        initVars()
+        registerClickEvents()
 
         binding.btnGallery.setOnClickListener { startGallery() }
         binding.btnCamera.setOnClickListener { startCamera() }
@@ -92,11 +100,53 @@ class InputBarang : AppCompatActivity() {
     private fun showImage() {
         currentImageUri?.let {
             Log.d("Image URI", "showImage: $it")
-            binding.inpImgBarang.setImageURI(it)
+            binding.ivgambarBarang.setImageURI(it)
         }
     }
 
+    private fun registerClickEvents(){
+        binding.btnTambahBarang.setOnClickListener {
+            uploadImage()
+        }
+        binding.ivgambarBarang.setOnClickListener {
+            resultLauncher.launch("Gambar/*")
+        }
+    }
+    private val resultLauncher = registerForActivityResult(
+        ActivityResultContracts.GetContent()) {
+        currentImageUri = it
+        binding.ivgambarBarang.setImageURI(it)
+    }
+    private fun initVars(){
+        storageRef = FirebaseStorage.getInstance().reference.child("Gambar")
+        firebaseFirestore = FirebaseFirestore.getInstance()
+    }
+
     private fun uploadImage() {
-        Toast.makeText(this, "Fitur ini belum tersedia", Toast.LENGTH_SHORT).show()
+        storageRef = storageRef.child(System.currentTimeMillis().toString())
+        currentImageUri?.let {
+            storageRef.putFile(it).addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    storageRef.downloadUrl.addOnSuccessListener { uri ->
+                        val map = HashMap<String, Any>()
+                        map["Pictures"] = uri.toString()
+
+                        firebaseFirestore.collection("Gambar Produk").add(map).addOnCompleteListener {
+                            firestoreTask ->
+                            if (firestoreTask.isSuccessful) {
+                                Toast.makeText(this, "Berhasil Mengunggah Gambar", Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(this, firestoreTask.exception?.message, Toast.LENGTH_SHORT).show()
+                            }
+                            binding.ivgambarBarang.setImageResource(R.drawable.vector_ek1)
+                        }
+                    }
+
+                } else {
+                    Toast.makeText(this, task.exception?.message, Toast.LENGTH_SHORT).show()
+                    binding.ivgambarBarang.setImageResource(R.drawable.vector_ek1)
+                }
+            }
+        }
     }
 }
