@@ -40,7 +40,7 @@ class Login : AppCompatActivity() {
                     if (task.isSuccessful) {
                         startActivity(Intent(this, MainActivity::class.java))
                     } else {
-                        Toast.makeText(this, "Gagal Masuk Ke Sistem", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "Periksa Kembali Email dan Kata Sandi Anda", Toast.LENGTH_SHORT).show()
                     }
                 }
         }
