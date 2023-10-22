@@ -8,26 +8,28 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bornewtech.mitrapesaing.R
 import com.bornewtech.mitrapesaing.data.firestoreDb.Products
 
-class ProductsAdapter(private val productsList:ArrayList<Products> ) : RecyclerView.Adapter<ProductsAdapter.ProductsViewHolder>(){
-
-    class ProductsViewHolder(itemView: View):RecyclerView.ViewHolder(itemView) {
-        val rv_namaBarang:TextView = itemView.findViewById(R.id.namaBarang)
-        val rv_stokBarang:TextView = itemView.findViewById(R.id.stokBarang)
-        val rv_hargaBarang:TextView = itemView.findViewById(R.id.hargaBarang)
+class ProductsAdapter(private val productList: ArrayList<Products>) :
+    RecyclerView.Adapter<ProductsAdapter.MyViewHolderProducts>() {
+    class MyViewHolderProducts(itemView: View): RecyclerView.ViewHolder(itemView) {
+        val nama: TextView = itemView.findViewById(R.id.namaBarang)
+        val stok: TextView = itemView.findViewById(R.id.stokBarang)
+        val harga: TextView = itemView.findViewById(R.id.hargaBarang)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductsViewHolder {
-        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.list_produk, parent, false)
-        return ProductsViewHolder(itemView)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolderProducts {
+        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.list_produk, parent,false)
+        return MyViewHolderProducts(itemView)
     }
 
-    override fun onBindViewHolder(holder: ProductsViewHolder, position: Int) {
-        holder.rv_namaBarang.text = productsList[position].namaBarang
-        holder.rv_stokBarang.text = productsList[position].stokBarang.toString()
-        holder.rv_hargaBarang.text = productsList[position].hargaBarang.toString()
+    override fun onBindViewHolder(holder: MyViewHolderProducts, position: Int) {
+        holder.nama.text = productList[position].nama
+        holder.stok.text = productList[position].stok.toString()
+        holder.harga.text = productList[position].harga.toString()
     }
 
     override fun getItemCount(): Int {
-        return productsList.size
+        return productList.size
     }
+
+
 }

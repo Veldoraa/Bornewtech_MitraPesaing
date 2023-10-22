@@ -85,5 +85,8 @@ dependencies {
     // firebase Firestore
     implementation 'com.google.firebase:firebase-firestore-ktx:24.8.1'
     // firebase Storage
-    implementation 'com.google.firebase:firebase-storage-ktx:20.2.1'
+    implementation 'com.google.firebase:firebase-storage:20.3.0'
+    // firebase realtime database
+    implementation 'com.google.firebase:firebase-database:20.3.0'
+
 }

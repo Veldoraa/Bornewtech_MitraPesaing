@@ -4,11 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/listbarangRV"
     tools:context=".data.recyclerView.RecyclerProdukActivity">
 
     <androidx.recyclerview.widget.RecyclerView
         tools:listitem="@layout/list_produk"
+        android:id="@+id/recyclerViewProduk"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"

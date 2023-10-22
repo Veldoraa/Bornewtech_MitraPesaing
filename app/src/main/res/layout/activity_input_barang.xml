@@ -156,6 +156,33 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
+            android:id="@+id/tv_stok"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/stokBarang"
+            android:textColor="@color/black"
+            android:textSize="16sp"/>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/stokBarang"
+            style="@style/OutlinedRoundedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="30dp"
+            android:hint="@string/stokBarang">
+            <EditText
+                android:id="@+id/inp_Stok"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text|textNoSuggestions"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
             android:id="@+id/tv_harga"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

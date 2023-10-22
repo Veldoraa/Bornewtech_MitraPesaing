@@ -11,12 +11,13 @@ import com.bornewtech.mitrapesaing.data.firestoreDb.Products
 import com.bornewtech.mitrapesaing.databinding.ActivityRecyclerProdukBinding
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 
 class RecyclerProdukActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRecyclerProdukBinding
     private lateinit var recyclerView: RecyclerView
-    private lateinit var productsList: ArrayList<Products>
+    private lateinit var productList: ArrayList<Products>
 
     private var dbBarang = Firebase.firestore
 
@@ -26,23 +27,27 @@ class RecyclerProdukActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         dbBarang = FirebaseFirestore.getInstance()
-
-        recyclerView = findViewById(R.id.listbarangRV)
+        recyclerView = findViewById(R.id.recyclerViewProduk)
         recyclerView.layoutManager = LinearLayoutManager(this)
-        productsList = arrayListOf()
 
+        productList = arrayListOf()
+
+        dbBarang = FirebaseFirestore.getInstance()
         dbBarang.collection("Products").get()
             .addOnSuccessListener {
                 if (!it.isEmpty) {
                     for (data in it.documents) {
-                        val produk: Products? = data.toObject<Products>(Products::class.java)
-                        productsList.add(produk!!)
+                        val product: Products? = data.toObject(Products::class.java)
+                        if (product != null) {
+                            productList.add(product)
+                        }
                     }
-                    recyclerView.adapter = ProductsAdapter(productsList)
+                    recyclerView.adapter = ProductsAdapter(productList)
                 }
             }
             .addOnFailureListener {
                 Toast.makeText(this, it.toString(), Toast.LENGTH_SHORT).show()
             }
+
     }
 }

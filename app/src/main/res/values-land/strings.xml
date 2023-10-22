@@ -51,4 +51,5 @@
     <string name="nameproduct">Nama Produk</string>
     <string name="google_maps_api_key">AIzaSyCR4ayz7SHwNi36uHScjg4F3eieOt5PYcA</string>
     <string name="lupa_pass">Ganti Kata Sandi</string>
+    <string name="stokBarang">Stok Produk</string>
 </resources>
