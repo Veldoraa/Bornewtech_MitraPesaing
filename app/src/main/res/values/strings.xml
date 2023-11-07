@@ -55,4 +55,25 @@
     <string name="google_maps_api_key">AIzaSyCR4ayz7SHwNi36uHScjg4F3eieOt5PYcA</string>
     <string name="lupa_pass">Ganti Kata Sandi</string>
     <string name="stokBarang">Stok Produk</string>
+    <string name="inp_harga">Harga</string>
+    <string name="inp_stok">Stok</string>
+    <string name="hapus_produk">Hapus</string>
+    <string name="update_produk">Edit</string>
+    <string name="edit_produk">Edit Produk</string>
+    <string name="inp_product_name">Nama Produk</string>
+    <string name="btn_update">Konfirmasi</string>
+    <string name="btn_delete">Konfirmasi</string>
+    <string name="delete_produk">Hapus Produk</string>
+    <string name="ubah_profil">Perbarui Profil</string>
+    <string name="foto_profil">Foto profil mu</string>
+    <string name="pas_foto">Pasang foto kamu disini</string>
+    <string name="tambah_foto">Tambah foto profil mu</string>
+    <string name="nameuser">Nama Lengkap</string>
+    <string name="noHpUser">No Hp/Wa</string>
+    <string name="noHpuser">Nomor Hp/Wa Aktif</string>
+    <string name="alamatuser">Alamat Lengkap</string>
+    <string name="alamatUser">Alamat Asli</string>
+    <string name="simpan">Simpan</string>
+    <string name="upload">Unggah Gambar</string>
+    <string name="preview_addPhoto">Preview Add Photo</string>
 </resources>

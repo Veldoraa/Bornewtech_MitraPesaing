@@ -9,13 +9,33 @@ import com.bornewtech.mitrapesaing.R
 import com.bornewtech.mitrapesaing.databinding.ActivityLoginBinding
 import com.bornewtech.mitrapesaing.main.MainActivity
 import com.bornewtech.mitrapesaing.ui.register.Registrasi
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthCredential
+import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
 class Login : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
     private lateinit var auth:FirebaseAuth
+//    private lateinit var googleSignInClient: GoogleSignInClient
+    private var firebaseAuth = FirebaseAuth.getInstance()
+
+//    companion object {
+//        private const val RC_SIGN_IN = 1001;
+//    }
+
+//    override fun onStart() {
+//        super.onStart()
+//        if (firebaseAuth.currentUser != null ){
+//            startActivity(Intent(this, MainActivity::class.java))
+//        }
+//    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
@@ -23,12 +43,23 @@ class Login : AppCompatActivity() {
 
         auth = Firebase.auth
 
+//        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+//            .requestIdToken("459139532605-t6nfcoc68j5uj56tbpo1q6pl0bbtc5fa.apps.googleusercontent.com")
+//            .requestEmail()
+//            .build()
+//        googleSignInClient = GoogleSignIn.getClient(this, gso)
+
         // tombol ke registrasi
         binding.btnRegister.setOnClickListener {
             startActivity(Intent(this, Registrasi::class.java))
         }
         //tombol untuk login
         binding.btnLogin.setOnClickListener {loginUser()}
+//        // tombol login akun google
+//        binding.btnGoogle.setOnClickListener {
+//            val signInIntent = googleSignInClient.signInIntent
+//            startActivityForResult(signInIntent, RC_SIGN_IN)
+//        }
     }
 
     private fun loginUser(){
@@ -62,5 +93,30 @@ class Login : AppCompatActivity() {
             }
         }
     }
+//    @Deprecated("Deprecated in Java")
+//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+//        super.onActivityResult(requestCode, resultCode, data)
+//        if (requestCode == RC_SIGN_IN){
+//            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+//            try {
+//                val account = task.getResult(ApiException::class.java)!!
+//                firebaseAuthWithGoogle(account.idToken!!)
+//            } catch (e: ApiException) {
+//                e.printStackTrace()
+//                Toast.makeText(applicationContext, e.localizedMessage, Toast.LENGTH_SHORT).show()
+//            }
+//        }
+//    }
+//
+//    private fun firebaseAuthWithGoogle(idToken : String){
+//        val credentials = GoogleAuthProvider.getCredential(idToken, null)
+//        firebaseAuth.signInWithCredential(credentials)
+//            .addOnSuccessListener {
+//                startActivity(Intent(this, MainActivity::class.java))
+//            }
+//            .addOnFailureListener { error ->
+//                Toast.makeText(this, error.localizedMessage, Toast.LENGTH_SHORT).show()
+//            }
+//    }
 
 }

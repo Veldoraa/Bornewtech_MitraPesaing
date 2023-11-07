@@ -34,7 +34,7 @@
             android:fontFamily="@font/roboto_bold"
             android:text="@string/profil_saya"
             android:textColor="@color/black"
-            android:textSize="18sp"
+            android:textSize="24sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.079"
             app:layout_constraintStart_toEndOf="@id/back_to_DP"
@@ -42,9 +42,9 @@
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/img_user"
-            android:layout_width="76dp"
-            android:layout_height="76dp"
-            android:layout_marginStart="50dp"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_marginStart="20dp"
             android:layout_marginTop="70dp"
             android:src="@drawable/ic_baseline_circle_24"
             app:layout_constraintStart_toStartOf="parent"

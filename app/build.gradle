@@ -9,7 +9,7 @@ plugins {
 android {
     signingConfigs {
         debug {
-            storeFile file('D:\\Skripsi Yuan\\Pesaing\\keystore\\mitrapesaing\\mitraPesaing.jks')
+            storeFile file('C:\\Skripsi Yuan\\Android\\Keystore\\mitrapesaing\\mitraPesaing.jks')
             storePassword 'M1tr4P3s4iNG'
             keyAlias 'keymitra'
             keyPassword 'M1tr4P3s4iNG'
@@ -82,11 +82,15 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics-ktx'
     // firebase auth
     implementation("com.google.firebase:firebase-auth-ktx")
+    implementation("com.google.android.gms:play-services-auth:20.7.0")
     // firebase Firestore
-    implementation 'com.google.firebase:firebase-firestore-ktx:24.8.1'
+    implementation 'com.google.firebase:firebase-firestore-ktx:24.9.1'
     // firebase Storage
     implementation 'com.google.firebase:firebase-storage:20.3.0'
     // firebase realtime database
     implementation 'com.google.firebase:firebase-database:20.3.0'
+
+    // Google Play Service location
+    implementation 'com.google.android.gms:play-services-location:21.0.1'
 
 }

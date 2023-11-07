@@ -7,6 +7,7 @@ import com.bornewtech.mitrapesaing.R
 import com.bornewtech.mitrapesaing.data.recyclerView.RecyclerProdukActivity
 import com.bornewtech.mitrapesaing.databinding.ActivityMainBinding
 import com.bornewtech.mitrapesaing.maps.Maps
+import com.bornewtech.mitrapesaing.ui.barang.DetailBarang
 import com.bornewtech.mitrapesaing.ui.fragment.home.HomeFragment
 import com.bornewtech.mitrapesaing.ui.profile.Profil
 

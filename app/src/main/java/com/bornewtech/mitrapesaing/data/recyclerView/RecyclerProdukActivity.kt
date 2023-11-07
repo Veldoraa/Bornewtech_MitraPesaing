@@ -26,7 +26,7 @@ class RecyclerProdukActivity : AppCompatActivity() {
         binding = ActivityRecyclerProdukBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        dbBarang = FirebaseFirestore.getInstance()
+//        dbBarang = FirebaseFirestore.getInstance()
         recyclerView = findViewById(R.id.recyclerViewProduk)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
@@ -38,9 +38,7 @@ class RecyclerProdukActivity : AppCompatActivity() {
                 if (!it.isEmpty) {
                     for (data in it.documents) {
                         val product: Products? = data.toObject(Products::class.java)
-                        if (product != null) {
-                            productList.add(product)
-                        }
+                        productList.add(product!!)
                     }
                     recyclerView.adapter = ProductsAdapter(productList)
                 }
