@@ -2,9 +2,11 @@ package com.bornewtech.mitrapesaing.maps
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.core.content.ContextCompat
 import com.bornewtech.mitrapesaing.R
 import com.bornewtech.mitrapesaing.data.maps.Constants
+import com.bornewtech.mitrapesaing.data.maps.Constants.getHeatmapData
+import com.bornewtech.mitrapesaing.data.maps.FirebaseHelper
+import com.bornewtech.mitrapesaing.data.maps.RealtimeLatLng
 
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -14,14 +16,20 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.bornewtech.mitrapesaing.databinding.ActivityMapsBinding
 import com.google.android.gms.maps.model.TileOverlayOptions
+import com.google.firebase.FirebaseApp
 import com.google.maps.android.heatmaps.HeatmapTileProvider
+
 
 class Maps : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
     private lateinit var binding: ActivityMapsBinding
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Inisialisasi Firebase
+        FirebaseApp.initializeApp(this)
+
         super.onCreate(savedInstanceState)
 
         binding = ActivityMapsBinding.inflate(layoutInflater)
@@ -31,6 +39,17 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
+
+//        val firebaseHelper = FirebaseHelper()
+
+//        firebaseHelper.getData { dataSnapshot -> val data = dataSnapshot.getValue(RealtimeLatLng::class.java)
+//            val cluster = data?.cluster ?: 0
+//            val jumlah = data?.jmlh ?: 0
+//            val latitude = data?.lat ?: 0.0
+//            val longitude = data?.lng ?: 0.0
+//            // Gunakan dataSnapshot untuk mendapatkan data dari Firebase
+//            // Contoh: dataSnapshot.getValue(NamaKelas::class.java)
+//        }
     }
 
     /**
@@ -46,18 +65,28 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
         mMap = googleMap
 
         // Add a marker in Sydney and move the camera
-        val sydney = LatLng(-34.0, 151.0)
-        mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
+        val pontianak = LatLng(-0.02800127398174045, 109.34220099978418)
+        mMap.addMarker(MarkerOptions().position(pontianak).title("Marker di Pontianak"))
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(pontianak))
+        addHeatmap()
+    }
+    private fun addHeatmap(){
+        FirebaseApp.initializeApp(this)
 
-//        addHeatmap()
+        getHeatmapData { heatmapData ->
+            // Now you have the heatmapData, you can use it here
+            // For example, update your UI or perform other actions
+            // with the heatmapData
+            // Example: Update UI with the heatmapData
+            val heatmapProvider = HeatmapTileProvider.Builder()
+                .weightedData(heatmapData)
+                .radius(20)
+                .maxIntensity(25.0)
+                .build()
+
+            mMap?.addTileOverlay(TileOverlayOptions().tileProvider(heatmapProvider))
+        }
     }
 
-//    private fun addHeatmap() {
-//        val heatmapProvider = HeatmapTileProvider.Builder()
-//            .data(Constants.getHeatmapData())
-//            .radius(20)
-//            .build()
-//        mMap.addTileOverlay(TileOverlayOptions().tileProvider(heatmapProvider))
-//    }
+
 }
