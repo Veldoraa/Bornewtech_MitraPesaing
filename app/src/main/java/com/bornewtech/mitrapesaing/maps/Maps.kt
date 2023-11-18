@@ -86,6 +86,12 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
 
             mMap?.addTileOverlay(TileOverlayOptions().tileProvider(heatmapProvider))
         }
+//        val heatmapProvider = HeatmapTileProvider.Builder()
+//            .weightedData(Constants.getHeatmapData())
+//            .radius(20)
+//            .maxIntensity(25.0)
+//            .build()
+//        mMap?.addTileOverlay(TileOverlayOptions().tileProvider(heatmapProvider))
     }
 
 
