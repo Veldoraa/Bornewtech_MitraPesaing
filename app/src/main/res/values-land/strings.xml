@@ -73,4 +73,8 @@
     <string name="simpan">Simpan</string>
     <string name="upload">Unggah Gambar</string>
     <string name="preview_addPhoto">Preview Add Photo</string>
+    <string name="detailBarang">Detail Barang</string>
+    <string name="hargaBarang">Harga Produk</string>
+    <string name="stokbarang">Stok Barang</string>
+    <string name="namaBarang">Nama Produk</string>
 </resources>

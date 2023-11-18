@@ -4,10 +4,10 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.bornewtech.mitrapesaing.R
-import com.bornewtech.mitrapesaing.data.recyclerView.RecyclerProdukActivity
 import com.bornewtech.mitrapesaing.databinding.ActivityMainBinding
 import com.bornewtech.mitrapesaing.maps.Maps
 import com.bornewtech.mitrapesaing.ui.barang.DetailBarang
+import com.bornewtech.mitrapesaing.ui.barang.recyclerview.RecViewBarang
 import com.bornewtech.mitrapesaing.ui.fragment.home.HomeFragment
 import com.bornewtech.mitrapesaing.ui.profile.Profil
 
@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 R.id.barang_pedagang -> {
-                    val intent = Intent(this, RecyclerProdukActivity::class.java)
+                    val intent = Intent(this, RecViewBarang::class.java)
                     startActivity(intent)
                 }
 
