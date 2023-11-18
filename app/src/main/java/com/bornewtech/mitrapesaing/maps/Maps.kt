@@ -2,6 +2,7 @@ package com.bornewtech.mitrapesaing.maps
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import com.bornewtech.mitrapesaing.R
 import com.bornewtech.mitrapesaing.data.maps.Constants
 import com.bornewtech.mitrapesaing.data.maps.Constants.getHeatmapData
@@ -17,7 +18,14 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.bornewtech.mitrapesaing.databinding.ActivityMapsBinding
 import com.google.android.gms.maps.model.TileOverlayOptions
 import com.google.firebase.FirebaseApp
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.maps.android.heatmaps.HeatmapTileProvider
+import com.google.maps.android.heatmaps.WeightedLatLng
+import kotlin.math.log
 
 
 class Maps : AppCompatActivity(), OnMapReadyCallback {
@@ -70,29 +78,62 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
         mMap.moveCamera(CameraUpdateFactory.newLatLng(pontianak))
         addHeatmap()
     }
-    private fun addHeatmap(){
-        FirebaseApp.initializeApp(this)
 
-        getHeatmapData { heatmapData ->
-            // Now you have the heatmapData, you can use it here
-            // For example, update your UI or perform other actions
-            // with the heatmapData
-            // Example: Update UI with the heatmapData
-            val heatmapProvider = HeatmapTileProvider.Builder()
-                .weightedData(heatmapData)
-                .radius(20)
-                .maxIntensity(25.0)
-                .build()
+    private fun addHeatmap() {
+        val reference = FirebaseDatabase.getInstance().reference.child("data")
+        reference.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+//                val yourDataList = mutableListOf<RealtimeLatLng>()
 
-            mMap?.addTileOverlay(TileOverlayOptions().tileProvider(heatmapProvider))
-        }
+                val heatmapData = ArrayList<WeightedLatLng>()
+
+                for (snapshot in dataSnapshot.children) {
+                    val cluster = snapshot.child("cluster").getValue(Int::class.java) ?: 0
+                    val jmlh = snapshot.child("jmlh").getValue(Int::class.java) ?: 0
+                    val latitude = snapshot.child("lat").getValue(Double::class.java) ?: 0.0
+                    val longitude = snapshot.child("lng").getValue(Double::class.java) ?: 0.0
+
+//                    val heatmapData = ArrayList<WeightedLatLng>()
+                    heatmapData.add(WeightedLatLng(LatLng(latitude, longitude), cluster.toDouble()))
+                    println("Data from Firebase: $heatmapData")
+                }
+
+                val heatmapProvider = HeatmapTileProvider.Builder()
+                    .weightedData(heatmapData)
+                    .radius(20)
+                    .maxIntensity(10.0)
+                    .build()
+
+                mMap?.addTileOverlay(TileOverlayOptions().tileProvider(heatmapProvider))
+
+                // Now you have yourDataList containing the retrieved data, do something with it
+                // For example, display it in a RecyclerView or update the UI
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+//        FirebaseApp.initializeApp(this)
+//
+//        getHeatmapData { heatmapData ->
+//            // Now you have the heatmapData, you can use it here
+//            // For example, update your UI or perform other actions
+//            // with the heatmapData
+//            // Example: Update UI with the heatmapData
+//            val heatmapProvider = HeatmapTileProvider.Builder()
+//                .weightedData(heatmapData)
+//                .radius(20)
+//                .maxIntensity(25.0)
+//                .build()
+//
+//            mMap?.addTileOverlay(TileOverlayOptions().tileProvider(heatmapProvider))
+//        }
 //        val heatmapProvider = HeatmapTileProvider.Builder()
 //            .weightedData(Constants.getHeatmapData())
 //            .radius(20)
 //            .maxIntensity(25.0)
 //            .build()
 //        mMap?.addTileOverlay(TileOverlayOptions().tileProvider(heatmapProvider))
+        })
     }
-
-
 }
