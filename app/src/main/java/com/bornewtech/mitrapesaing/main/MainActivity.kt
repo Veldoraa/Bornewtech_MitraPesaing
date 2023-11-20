@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 R.id.barang_pedagang -> {
-                    val intent = Intent(this, RecViewBarang::class.java)
+                    val intent = Intent(this, DetailBarang::class.java)
                     startActivity(intent)
                 }
 

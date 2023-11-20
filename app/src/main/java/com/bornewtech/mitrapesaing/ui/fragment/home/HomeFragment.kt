@@ -32,6 +32,8 @@ class HomeFragment : Fragment() {
         }
     }
 
+    // dapatkan data dari rv ke fragmenthome
+
     override fun onDestroy() {
         super.onDestroy()
         _binding = null

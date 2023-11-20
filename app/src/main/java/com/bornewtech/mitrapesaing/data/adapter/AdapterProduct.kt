@@ -6,10 +6,11 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bornewtech.mitrapesaing.R
-import com.bornewtech.mitrapesaing.data.firestoreDb.Products
+import com.bornewtech.mitrapesaing.data.firestoreDb.ProductItem
 
-class AdapterProduct(private val productList: ArrayList<Products>) :
+class AdapterProduct(private var productList: List<ProductItem>) :
     RecyclerView.Adapter<AdapterProduct.ProductViewHolder>() {
+
     class ProductViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
         val namaBarang: TextView = itemView.findViewById(R.id.namaBarang)
         val stokBarang: TextView = itemView.findViewById(R.id.stokBarang)
@@ -26,9 +27,13 @@ class AdapterProduct(private val productList: ArrayList<Products>) :
     }
 
     override fun onBindViewHolder(holder: ProductViewHolder, position: Int) {
-        val produk: Products = productList[position]
-        holder.namaBarang.text = produk.nama.toString()
-        holder.stokBarang.text = produk.stok.toString()
-        holder.hargaBarang.text = produk.harga.toString()
+        val productItem: ProductItem = productList[position]
+        holder.namaBarang.text = productItem.produkNama.toString()
+        holder.stokBarang.text = productItem.produkStok.toString()
+        holder.hargaBarang.text = productItem.produkHarga.toString()
+    }
+
+    fun updateData(newList: List<ProductItem>) {
+        productList = newList
     }
 }

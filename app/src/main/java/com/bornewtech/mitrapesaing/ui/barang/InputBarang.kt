@@ -65,18 +65,18 @@ class InputBarang : AppCompatActivity() {
 
 
         binding.btnTambahBarang.setOnClickListener {
-            val name = binding.inpNamaProduk.text.toString().trim()
+            val nama = binding.inpNamaProduk.text.toString().trim()
             val kategori = binding.inpKategori.text.toString().trim()
             val satuan = binding.inpSatuan.text.toString().trim()
             val stok = binding.inpStok.text.toString().trim()
             val harga = binding.inpHarga.text.toString().trim()
 
             val barangMap = hashMapOf(
-                "Nama Produk" to name,
-                "Kategori Produk" to kategori,
-                "Satuan Produk" to satuan,
-                "Stok Produk" to stok,
-                "Harga Produk" to harga
+                "produkNama" to nama,
+                "produkKategori" to kategori,
+                "produkSatuan" to satuan,
+                "produkStok" to stok,
+                "produkHarga" to harga
             )
 
             //Nambah Barang
@@ -84,7 +84,7 @@ class InputBarang : AppCompatActivity() {
 //            dbBarang.collection("Products").document(userId).set(barangMap)
             val userId = FirebaseAuth.getInstance().currentUser!!.uid
             val databaseProduk = dbBarang.collection("Products").document(userId)
-            databaseProduk.update("listProduct", FieldValue.arrayUnion(barangMap))
+            databaseProduk.update("productList", FieldValue.arrayUnion(barangMap))
                 .addOnSuccessListener {
                     Toast.makeText(this, "Berhasil Memasukkan Data", Toast.LENGTH_SHORT).show()
                     binding.inpNamaProduk.text.clear()

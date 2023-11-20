@@ -23,23 +23,23 @@ class EditBarang : AppCompatActivity() {
         setData()
 
         binding.btnUpdateBarang.setOnClickListener {
-            val uName = binding.updNamaProduk.text.toString().trim()
+            val uNama = binding.updNamaProduk.text.toString().trim()
             val uKategori = binding.updKategori.text.toString().trim()
             val uSatuan = binding.updSatuan.text.toString().trim()
             val uStok = binding.updStokBarang.text.toString().trim()
             val uHarga = binding.updHargaBarang.text.toString().trim()
 
             val updateBarang = hashMapOf(
-                "Nama Produk" to uName,
-                "Kategori Produk" to uKategori,
-                "Satuan Produk" to uSatuan,
-                "Stok Produk" to uStok,
-                "Harga Produk" to uHarga
+                "produkNama" to uNama,
+                "produkKategori" to uKategori,
+                "produkSatuan" to uSatuan,
+                "produkStok" to uStok,
+                "produkHarga" to uHarga
             )
             val userId = FirebaseAuth.getInstance().currentUser!!.uid
             val produkUpdate = dbBarang.collection("Products").document(userId)
 //            dbBarang.collection("Products").document(userId).update(updateBarang)
-            produkUpdate.update("List produk dari UID ini", FieldValue.arrayUnion(updateBarang))
+            produkUpdate.update("productList", FieldValue.arrayUnion(updateBarang))
                 .addOnSuccessListener {
                     Toast.makeText(this, "Berhasil memperbarui data", Toast.LENGTH_SHORT).show()
                     binding.updNamaProduk.text.toString()

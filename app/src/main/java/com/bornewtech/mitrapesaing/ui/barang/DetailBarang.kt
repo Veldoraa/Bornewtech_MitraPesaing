@@ -22,18 +22,18 @@ class DetailBarang : AppCompatActivity() {
         setContentView(binding.root)
         supportActionBar?.hide()
 
-        val name = binding.namaBarang.text.toString().trim()
+        val nama = binding.namaBarang.text.toString().trim()
         val kategori = binding.category.text.toString().trim()
         val satuan = binding.satuan.text.toString().trim()
         val stok = binding.stokBarang.text.toString().trim()
         val harga = binding.hargaBarang.text.toString().trim()
 
         val barangMap = hashMapOf(
-            "Nama Produk" to name,
-            "Kategori Produk" to kategori,
-            "Satuan Produk" to satuan,
-            "Stok Produk" to stok,
-            "Harga Produk" to harga
+            "produkNama" to nama,
+            "produkKategori" to kategori,
+            "produkSatuan" to satuan,
+            "produkStok" to stok,
+            "produkHarga" to harga
         )
 
         val userId = FirebaseAuth.getInstance().currentUser!!.uid
@@ -42,7 +42,7 @@ class DetailBarang : AppCompatActivity() {
         referensi.get()
             .addOnSuccessListener { document ->
                 if (document != null && document.exists()) {
-                    val array = document.get("listProduct") as ArrayList<*>
+                    val array = document.get("productList") as ArrayList<*>
                     if (array.isNotEmpty()){
                         array[0]
                     }
