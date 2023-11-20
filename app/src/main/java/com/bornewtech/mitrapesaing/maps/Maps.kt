@@ -91,18 +91,21 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId){
-            R.id.item1 -> addHeatmap()
+            R.id.item1 -> addHeatmap(3)
+            R.id.item2 -> addHeatmap(7)
+            R.id.item3 -> addHeatmap(30)
+            R.id.item4 -> addHeatmap(365)
         }
         return super.onOptionsItemSelected(item)
     }
 
-    private fun addHeatmap() {
+    private fun addHeatmap(time: Int) {
         val reference = FirebaseDatabase.getInstance().reference.child("data")
-//        val sevenDaysAgoMillis = Calendar.getInstance().apply {
-//            add(Calendar.DAY_OF_MONTH, -3)
-//        }.timeInMillis
+        val fewDaysAgoMillis = Calendar.getInstance().apply {
+            add(Calendar.DAY_OF_MONTH, -time)
+        }.timeInMillis
 
-        reference.addValueEventListener(object : ValueEventListener {
+        reference.orderByChild("timestamp").startAt(fewDaysAgoMillis.toDouble()).addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
 //                val yourDataList = mutableListOf<RealtimeLatLng>()
 
