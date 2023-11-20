@@ -3,6 +3,8 @@ package com.bornewtech.mitrapesaing.maps
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import com.bornewtech.mitrapesaing.R
 import com.bornewtech.mitrapesaing.data.maps.Constants
 import com.bornewtech.mitrapesaing.data.maps.Constants.getHeatmapData
@@ -25,6 +27,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.maps.android.heatmaps.HeatmapTileProvider
 import com.google.maps.android.heatmaps.WeightedLatLng
+import java.util.Calendar
 import kotlin.math.log
 
 
@@ -48,6 +51,7 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
+        // inisialisasi maps menu
 //        val firebaseHelper = FirebaseHelper()
 
 //        firebaseHelper.getData { dataSnapshot -> val data = dataSnapshot.getValue(RealtimeLatLng::class.java)
@@ -76,11 +80,28 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
         val pontianak = LatLng(-0.02800127398174045, 109.34220099978418)
         mMap.addMarker(MarkerOptions().position(pontianak).title("Marker di Pontianak"))
         mMap.moveCamera(CameraUpdateFactory.newLatLng(pontianak))
-        addHeatmap()
+
+//        addHeatmap()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.list_timestamp, menu )
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId){
+            R.id.item1 -> addHeatmap()
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     private fun addHeatmap() {
         val reference = FirebaseDatabase.getInstance().reference.child("data")
+//        val sevenDaysAgoMillis = Calendar.getInstance().apply {
+//            add(Calendar.DAY_OF_MONTH, -3)
+//        }.timeInMillis
+
         reference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
 //                val yourDataList = mutableListOf<RealtimeLatLng>()
@@ -95,7 +116,7 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
 
 //                    val heatmapData = ArrayList<WeightedLatLng>()
                     heatmapData.add(WeightedLatLng(LatLng(latitude, longitude), cluster.toDouble()))
-                    println("Data from Firebase: $heatmapData")
+//                    println("Data from Firebase: $heatmapData")
                 }
 
                 val heatmapProvider = HeatmapTileProvider.Builder()
@@ -113,27 +134,6 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
             override fun onCancelled(error: DatabaseError) {
                 TODO("Not yet implemented")
             }
-//        FirebaseApp.initializeApp(this)
-//
-//        getHeatmapData { heatmapData ->
-//            // Now you have the heatmapData, you can use it here
-//            // For example, update your UI or perform other actions
-//            // with the heatmapData
-//            // Example: Update UI with the heatmapData
-//            val heatmapProvider = HeatmapTileProvider.Builder()
-//                .weightedData(heatmapData)
-//                .radius(20)
-//                .maxIntensity(25.0)
-//                .build()
-//
-//            mMap?.addTileOverlay(TileOverlayOptions().tileProvider(heatmapProvider))
-//        }
-//        val heatmapProvider = HeatmapTileProvider.Builder()
-//            .weightedData(Constants.getHeatmapData())
-//            .radius(20)
-//            .maxIntensity(25.0)
-//            .build()
-//        mMap?.addTileOverlay(TileOverlayOptions().tileProvider(heatmapProvider))
         })
     }
 }

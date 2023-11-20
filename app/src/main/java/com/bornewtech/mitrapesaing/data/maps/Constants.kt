@@ -26,7 +26,7 @@ object Constants {
         val firebaseHelper = FirebaseHelper()
         firebaseHelper.getData { dataSnapshot ->
             val data = dataSnapshot.getValue(RealtimeLatLng::class.java)
-            println("Data from Firebase: $data")
+//            println("Data from Firebase: $data")
             val cluster = data?.cluster ?: 0
             val jumlah = data?.jmlh ?: 0
             val latitude = data?.lat ?: 0.0
