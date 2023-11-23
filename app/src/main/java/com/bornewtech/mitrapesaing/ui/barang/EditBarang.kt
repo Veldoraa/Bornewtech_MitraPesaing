@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import com.bornewtech.mitrapesaing.R
+import com.bornewtech.mitrapesaing.data.firestoreDb.ProductItem
+import com.bornewtech.mitrapesaing.data.firestoreDb.Products
 import com.bornewtech.mitrapesaing.databinding.ActivityEditBarangBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
@@ -59,22 +61,29 @@ class EditBarang : AppCompatActivity() {
         val userId = FirebaseAuth.getInstance().currentUser!!.uid
         val referensi = dbBarang.collection("Products").document(userId)
         referensi.get()
-            .addOnSuccessListener {
-            if (it != null) {
-                val name = it.data?.get("Nama Produk")?.toString()
-                val kategori = it.data?.get("Kategori Produk")?.toString()
-                val satuan = it.data?.get("Satuan Produk")?.toString()
-                val stok = it.data?.get("Stok Produk")?.toString()
-                val harga = it.data?.get("Harga Produk")?.toString()
+            .addOnSuccessListener { document ->
+                if (document != null && document.exists()) {
+                    val products = document.toObject(Products::class.java)
+                    val productList = products?.productList
 
-                binding.updNamaProduk.setText(name)
-                binding.updKategori.setText(kategori)
-                binding.updSatuan.setText(satuan)
-                binding.updStokBarang.setText(stok)
-                binding.updHargaBarang.setText(harga)
+                    if (!productList.isNullOrEmpty()) {
+                        val selectedItem = intent.getSerializableExtra("selectedItem") as? ProductItem
+
+                        if (selectedItem != null) {
+                            // Use selectedItem data to populate the UI
+                            binding.updNamaProduk.setText(selectedItem.produkNama)
+                            binding.updKategori.setText(selectedItem.produkKategori)
+                            binding.updSatuan.setText(selectedItem.produkSatuan)
+                            binding.updStokBarang.setText(selectedItem.produkStok)
+                            binding.updHargaBarang.setText(selectedItem.produkHarga)
+                        } else {
+                            // Handle the case when no item is selected (optional)
+                            Toast.makeText(this, "No item selected", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
             }
-        }
-            .addOnFailureListener{
+            .addOnFailureListener {
                 Toast.makeText(this, "Gagal mengupdate barang", Toast.LENGTH_SHORT).show()
             }
     }

@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import com.bornewtech.mitrapesaing.data.firestoreDb.ProductItem
 import com.bornewtech.mitrapesaing.data.firestoreDb.Products
 import com.bornewtech.mitrapesaing.databinding.ActivityDetailBarangBinding
 import com.google.firebase.auth.FirebaseAuth
@@ -22,19 +23,16 @@ class DetailBarang : AppCompatActivity() {
         setContentView(binding.root)
         supportActionBar?.hide()
 
-        val nama = binding.namaBarang.text.toString().trim()
-        val kategori = binding.category.text.toString().trim()
-        val satuan = binding.satuan.text.toString().trim()
-        val stok = binding.stokBarang.text.toString().trim()
-        val harga = binding.hargaBarang.text.toString().trim()
+        val selectedItem = intent.getSerializableExtra("selectedItem") as? ProductItem
+        if (selectedItem != null) {
+            // Use selectedItem data to populate the detail view
+            binding.namaBarang.text = selectedItem.produkNama.toString()
+            binding.category.text = selectedItem.produkKategori.toString()
+            binding.satuan.text = selectedItem.produkSatuan.toString()
+            binding.stokBarang.text = selectedItem.produkStok.toString()
+            binding.hargaBarang.text = selectedItem.produkHarga.toString()
+        }
 
-        val barangMap = hashMapOf(
-            "produkNama" to nama,
-            "produkKategori" to kategori,
-            "produkSatuan" to satuan,
-            "produkStok" to stok,
-            "produkHarga" to harga
-        )
 
         val userId = FirebaseAuth.getInstance().currentUser!!.uid
         val referensi = dbBarang.collection("Products").document(userId)
@@ -47,26 +45,14 @@ class DetailBarang : AppCompatActivity() {
                         array[0]
                     }
                 }
-//            if (it != null) {
-//
-//                val barangNama = it.data?.get("Nama Produk").toString()
-//                val barangKategori = it.data?.get("Kategori Produk").toString()
-//                val barangSatuan = it.data?.get("Satuan Produk").toString()
-//                val barangStok = it.data?.get("Stok Produk").toString()
-//                val barangHarga = it.data?.get("Harga Produk").toString()
-//
-//                binding.namaBarang.text = barangNama
-//                binding.category.text = barangKategori
-//                binding.satuan.text = barangSatuan
-//                binding.stokBarang.text = barangStok
-//                binding.hargaBarang.text = barangHarga
-//            }
         }
             .addOnFailureListener {
                 Toast.makeText(this, "Gagal Menarik Data", Toast.LENGTH_SHORT).show()
             }
-        binding.btnUpdateBarang.setOnClickListener{
-            startActivity(Intent(this, EditBarang::class.java))
+        binding.btnUpdateBarang.setOnClickListener {
+            val intent = Intent(this, EditBarang::class.java)
+            intent.putExtra("selectedItem", selectedItem)
+            startActivity(intent)
             finish()
         }
 

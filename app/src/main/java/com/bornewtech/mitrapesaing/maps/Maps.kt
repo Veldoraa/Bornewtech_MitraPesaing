@@ -6,11 +6,6 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import com.bornewtech.mitrapesaing.R
-import com.bornewtech.mitrapesaing.data.maps.Constants
-import com.bornewtech.mitrapesaing.data.maps.Constants.getHeatmapData
-import com.bornewtech.mitrapesaing.data.maps.FirebaseHelper
-import com.bornewtech.mitrapesaing.data.maps.RealtimeLatLng
-
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -38,20 +33,18 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        // Inisialisasi Firebase
-        FirebaseApp.initializeApp(this)
-
         super.onCreate(savedInstanceState)
-
         binding = ActivityMapsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // Inisialisasi Firebase
+        FirebaseApp.initializeApp(this)
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
-        // inisialisasi maps menu
 //        val firebaseHelper = FirebaseHelper()
 
 //        firebaseHelper.getData { dataSnapshot -> val data = dataSnapshot.getValue(RealtimeLatLng::class.java)
@@ -80,63 +73,103 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
         val pontianak = LatLng(-0.02800127398174045, 109.34220099978418)
         mMap.addMarker(MarkerOptions().position(pontianak).title("Marker di Pontianak"))
         mMap.moveCamera(CameraUpdateFactory.newLatLng(pontianak))
-
-//        addHeatmap()
+        addHeatmap()
     }
 
+    private var time: Int = 0
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.list_timestamp, menu )
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId){
-            R.id.item1 -> addHeatmap(3)
-            R.id.item2 -> addHeatmap(7)
-            R.id.item3 -> addHeatmap(30)
-            R.id.item4 -> addHeatmap(365)
+        when (item.itemId) {
+            R.id.item1 -> {
+                time = 3
+                addHeatmap()
+            }
+            R.id.item2 -> {
+                time = 7
+                addHeatmap()
+            }
+            R.id.item3 -> {
+                time = 30
+                addHeatmap()
+            }
+            R.id.item4 -> {
+                time = 365
+                addHeatmap()
+            }
         }
         return super.onOptionsItemSelected(item)
     }
 
-    private fun addHeatmap(time: Int) {
+    private fun addHeatmap(time: Int = 0) {
         val reference = FirebaseDatabase.getInstance().reference.child("data")
         val fewDaysAgoMillis = Calendar.getInstance().apply {
-            add(Calendar.DAY_OF_MONTH, -time)
+            add(Calendar.DAY_OF_MONTH, -time) // Use -time here to subtract days
         }.timeInMillis
 
-        reference.orderByChild("timestamp").startAt(fewDaysAgoMillis.toDouble()).addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-//                val yourDataList = mutableListOf<RealtimeLatLng>()
+        Log.d("MapsActivity", "Start timestamp: $fewDaysAgoMillis")
 
+        reference.orderByChild("timestamp").startAt(fewDaysAgoMillis.toDouble()).addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val heatmapData = ArrayList<WeightedLatLng>()
 
                 for (snapshot in dataSnapshot.children) {
-                    val cluster = snapshot.child("cluster").getValue(Int::class.java) ?: 0
-                    val jmlh = snapshot.child("jmlh").getValue(Int::class.java) ?: 0
-                    val latitude = snapshot.child("lat").getValue(Double::class.java) ?: 0.0
-                    val longitude = snapshot.child("lng").getValue(Double::class.java) ?: 0.0
+                    val cluster = snapshot.child("cluster").getValue(Int::class.java)
+                    val jmlh = snapshot.child("jmlh").getValue(Int::class.java)
+                    val latitude = snapshot.child("lat").getValue(Double::class.java)
+                    val longitude = snapshot.child("lng").getValue(Double::class.java)
 
-//                    val heatmapData = ArrayList<WeightedLatLng>()
-                    heatmapData.add(WeightedLatLng(LatLng(latitude, longitude), cluster.toDouble()))
-//                    println("Data from Firebase: $heatmapData")
+                    if (cluster != null && jmlh != null && latitude != null && longitude != null) {
+                        heatmapData.add(WeightedLatLng(LatLng(latitude, longitude), cluster.toDouble()))
+                    } else {
+                        Log.e("MapsActivity", "One or more values from Firebase are null.")
+                    }
                 }
 
-                val heatmapProvider = HeatmapTileProvider.Builder()
-                    .weightedData(heatmapData)
-                    .radius(20)
-                    .maxIntensity(10.0)
-                    .build()
+                runOnUiThread {
+                    if (heatmapData.isNotEmpty()) {
+                        val heatmapProvider = HeatmapTileProvider.Builder()
+                            .weightedData(heatmapData)
+                            .radius(20)
+                            .maxIntensity(10.0)
+                            .build()
 
-                mMap?.addTileOverlay(TileOverlayOptions().tileProvider(heatmapProvider))
-
-                // Now you have yourDataList containing the retrieved data, do something with it
-                // For example, display it in a RecyclerView or update the UI
+                        mMap?.addTileOverlay(TileOverlayOptions().tileProvider(heatmapProvider))
+                    } else {
+                        Log.e("MapsActivity", "No data available for the selected time range.")
+                    }
+                }
             }
 
             override fun onCancelled(error: DatabaseError) {
-                TODO("Not yet implemented")
+                Log.e("MapsActivity", "Firebase query cancelled: $error")
             }
         })
     }
+
+//        FirebaseApp.initializeApp(this)
+//
+//        getHeatmapData { heatmapData ->
+//            // Now you have the heatmapData, you can use it here
+//            // For example, update your UI or perform other actions
+//            // with the heatmapData
+//            // Example: Update UI with the heatmapData
+//            val heatmapProvider = HeatmapTileProvider.Builder()
+//                .weightedData(heatmapData)
+//                .radius(20)
+//                .maxIntensity(25.0)
+//                .build()
+//
+//            mMap?.addTileOverlay(TileOverlayOptions().tileProvider(heatmapProvider))
+//        }
+//        val heatmapProvider = HeatmapTileProvider.Builder()
+//            .weightedData(Constants.getHeatmapData())
+//            .radius(20)
+//            .maxIntensity(25.0)
+//            .build()
+//        mMap?.addTileOverlay(TileOverlayOptions().tileProvider(heatmapProvider))
+
 }

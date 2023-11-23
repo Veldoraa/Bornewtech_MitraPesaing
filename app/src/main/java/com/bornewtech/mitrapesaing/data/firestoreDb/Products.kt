@@ -1,8 +1,9 @@
 package com.bornewtech.mitrapesaing.data.firestoreDb
 
+import java.io.Serializable
+
 data class Products(
-    // Other fields...
-    val productList: List<ProductItem>? = null
+    val productList: List<ProductItem> = emptyList()
 )
 
 data class ProductItem(
@@ -11,4 +12,4 @@ data class ProductItem(
     val produkKategori: String? = null,
     val produkSatuan: String? = null,
     val produkHarga: String? = null
-)
+) : Serializable
