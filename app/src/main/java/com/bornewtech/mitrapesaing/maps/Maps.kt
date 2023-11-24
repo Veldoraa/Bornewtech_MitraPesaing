@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.RadioGroup
 import com.bornewtech.mitrapesaing.R
 import com.bornewtech.mitrapesaing.data.maps.Constants
 import com.bornewtech.mitrapesaing.data.maps.Constants.getHeatmapData
@@ -35,6 +36,7 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
     private lateinit var binding: ActivityMapsBinding
+//    private lateinit var radioGroup: RadioGroup
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,6 +47,35 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
 
         binding = ActivityMapsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // Get reference to RadioGroup
+//        radioGroup = findViewById(R.id.radioGroupMaps)
+//
+//
+//        // Set a listener for radio button changes
+//        radioGroup.setOnCheckedChangeListener { _, checkedId ->
+//            when (checkedId) {
+//                R.id.radioButton1 -> {
+//                    // Handle option "3 hari Terakhir"
+//                    val threeDaysAgo = System.currentTimeMillis() / 1000 - (3 * 24 * 60 * 60)
+//                    addHeatmap(threeDaysAgo)
+//                }
+//                R.id.radioButton2 -> {
+//                    // Handle option "7 Hari Terakhir"
+//                    val sevenDaysAgo = System.currentTimeMillis() / 1000 - (7 * 24 * 60 * 60)
+//                    addHeatmap(sevenDaysAgo)
+//                }
+//                R.id.radioButton3 -> {
+//                    // Handle option "30 Hari Terakhir"
+//                    val thirtyDaysAgo = System.currentTimeMillis() / 1000 - (30 * 24 * 60 * 60)
+//                    addHeatmap(thirtyDaysAgo)
+//                }
+//                R.id.radioButton4 -> {
+//                    // Handle option "Semua Data"
+//                    addHeatmap(0) // Pass 0 or another value to retrieve all data
+//                }
+//            }
+//        }
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
@@ -81,7 +112,6 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
         mMap.addMarker(MarkerOptions().position(pontianak).title("Marker di Pontianak"))
         mMap.moveCamera(CameraUpdateFactory.newLatLng(pontianak))
 
-//        addHeatmap()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -89,23 +119,55 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
         return true
     }
 
+
+
+
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId){
-            R.id.item1 -> addHeatmap(3)
-            R.id.item2 -> addHeatmap(7)
-            R.id.item3 -> addHeatmap(30)
-            R.id.item4 -> addHeatmap(365)
+        val currentTimeStamp = System.currentTimeMillis() / 1000 // Ubah ke detik
+        val threeDaysAgo = currentTimeStamp - (3 * 24 * 60 * 60)
+        val sevenDaysAgo = currentTimeStamp - (7 * 24 * 60 * 60)
+        val thirtyDaysAgo = currentTimeStamp - (7 * 24 * 60 * 60)
+        val alldata = currentTimeStamp - (365 * 24 * 60 * 60)
+//        when (item.itemId){
+//            R.id.item1 -> addHeatmap(threeDaysAgo)
+//            R.id.item2 -> addHeatmap(sevenDaysAgo)
+//            R.id.item3 -> addHeatmap(thirtyDaysAgo)
+//            R.id.item4 -> addHeatmap(alldata)
+//        }
+        when (item.itemId) {
+            R.id.item1 -> {
+                addHeatmap(threeDaysAgo)
+                return true
+            }
+            R.id.item2 -> {
+                addHeatmap(sevenDaysAgo)
+                return true
+            }
+            R.id.item3 -> {
+                addHeatmap(thirtyDaysAgo)
+
+                return true
+            }
+            R.id.item4 -> {
+                addHeatmap(alldata)
+                return true
+            }
+            else -> return false
         }
-        return super.onOptionsItemSelected(item)
+//        return super.onOptionsItemSelected(item)
     }
 
-    private fun addHeatmap(time: Int) {
+    private fun addHeatmap(waktu: Long) {
         val reference = FirebaseDatabase.getInstance().reference.child("data")
-        val fewDaysAgoMillis = Calendar.getInstance().apply {
-            add(Calendar.DAY_OF_MONTH, -time)
-        }.timeInMillis
+//        val timestampAwal = 160000
 
-        reference.orderByChild("timestamp").startAt(fewDaysAgoMillis.toDouble()).addValueEventListener(object : ValueEventListener {
+
+
+        //      Membuat query untuk mengambil data berdasarkan timestamp
+        val query = reference.orderByChild("timestamp").startAt(waktu.toDouble())
+
+        query.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
 //                val yourDataList = mutableListOf<RealtimeLatLng>()
 
@@ -113,6 +175,7 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
 
                 for (snapshot in dataSnapshot.children) {
                     val cluster = snapshot.child("cluster").getValue(Int::class.java) ?: 0
+                    val timestamp = snapshot.child("timestamp").getValue(Int::class.java) ?: 0
                     val jmlh = snapshot.child("jmlh").getValue(Int::class.java) ?: 0
                     val latitude = snapshot.child("lat").getValue(Double::class.java) ?: 0.0
                     val longitude = snapshot.child("lng").getValue(Double::class.java) ?: 0.0
@@ -128,7 +191,7 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
                     .maxIntensity(10.0)
                     .build()
 
-                mMap?.addTileOverlay(TileOverlayOptions().tileProvider(heatmapProvider))
+                mMap.addTileOverlay(TileOverlayOptions().tileProvider(heatmapProvider))
 
                 // Now you have yourDataList containing the retrieved data, do something with it
                 // For example, display it in a RecyclerView or update the UI
