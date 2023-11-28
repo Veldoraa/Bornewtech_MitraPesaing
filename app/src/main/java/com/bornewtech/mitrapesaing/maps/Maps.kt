@@ -1,35 +1,29 @@
 package com.bornewtech.mitrapesaing.maps
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.RadioGroup
+import androidx.appcompat.app.AppCompatActivity
 import com.bornewtech.mitrapesaing.R
-import com.bornewtech.mitrapesaing.data.maps.Constants
-import com.bornewtech.mitrapesaing.data.maps.Constants.getHeatmapData
-import com.bornewtech.mitrapesaing.data.maps.FirebaseHelper
-import com.bornewtech.mitrapesaing.data.maps.RealtimeLatLng
-
+import com.bornewtech.mitrapesaing.databinding.ActivityMapsBinding
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import com.bornewtech.mitrapesaing.databinding.ActivityMapsBinding
 import com.google.android.gms.maps.model.TileOverlayOptions
 import com.google.firebase.FirebaseApp
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.maps.android.heatmaps.HeatmapTileProvider
 import com.google.maps.android.heatmaps.WeightedLatLng
-import java.util.Calendar
-import kotlin.math.log
+import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.sin
+import kotlin.math.sqrt
 
 
 class Maps : AppCompatActivity(), OnMapReadyCallback {
@@ -158,6 +152,43 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
 //        return super.onOptionsItemSelected(item)
     }
 
+
+
+    data class Lokasi(val latitude: Double, val longitude: Double)
+
+    fun hitungJarak(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
+        val radiusBumi = 6371 // Radius Bumi dalam kilometer
+
+        val deltaLat = Math.toRadians(lat2 - lat1)
+        val deltaLon = Math.toRadians(lon2 - lon1)
+        val a = sin(deltaLat / 2) * sin(deltaLat / 2) +
+                cos(Math.toRadians(lat1)) * cos(Math.toRadians(lat2)) *
+                sin(deltaLon / 2) * sin(deltaLon / 2)
+        val c = 2 * atan2(sqrt(a), sqrt(1 - a))
+
+        return radiusBumi * c // Jarak dalam kilometer
+    }
+
+    fun temukanTitikTerdekat(lokasiReferensi: Lokasi, listTitik: List<Lokasi>): Lokasi? {
+        var titikTerdekat: Lokasi? = null
+        var jarakTerdekat = Double.MAX_VALUE
+
+        for (lokasi in listTitik) {
+            val jarak = hitungJarak(
+                lokasiReferensi.latitude, lokasiReferensi.longitude,
+                lokasi.latitude, lokasi.longitude
+            )
+
+            if (jarak < jarakTerdekat) {
+                jarakTerdekat = jarak
+                titikTerdekat = lokasi
+            }
+        }
+
+        return titikTerdekat
+    }
+
+
     private fun addHeatmap(waktu: Long) {
         val reference = FirebaseDatabase.getInstance().reference.child("data")
 //        val timestampAwal = 160000
@@ -184,6 +215,17 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
                     heatmapData.add(WeightedLatLng(LatLng(latitude, longitude), cluster.toDouble()))
 //                    println("Data from Firebase: $heatmapData")
                 }
+
+                // Contoh penggunaan:
+                val lokasiPengguna = Lokasi(37.7749, -122.4194)
+                val listTitik = listOf(
+                    Lokasi(34.0522, -118.2437),
+                    Lokasi(40.7128, -74.0060),
+                    Lokasi(41.8781, -87.6298)
+                )
+
+                val titikTerdekat = temukanTitikTerdekat(lokasiPengguna, listTitik)
+                println("Titik terdekat: ${titikTerdekat?.latitude}, ${titikTerdekat?.longitude}")
 
                 val heatmapProvider = HeatmapTileProvider.Builder()
                     .weightedData(heatmapData)
