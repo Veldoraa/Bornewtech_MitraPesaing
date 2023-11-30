@@ -76,6 +76,9 @@ dependencies {
     implementation 'com.google.android.gms:play-services-maps:18.2.0'
     // maps utils
     implementation 'com.google.maps.android:android-maps-utils:3.4.0'
+    // maps services
+    implementation 'com.google.maps:google-maps-services:0.15.0'
+
 
 
     /** === FIREBASE === **/
@@ -94,5 +97,6 @@ dependencies {
 
     // Google Play Service location
     implementation 'com.google.android.gms:play-services-location:21.0.1'
+
 
 }

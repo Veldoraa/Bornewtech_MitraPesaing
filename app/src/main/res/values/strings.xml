@@ -80,4 +80,7 @@
     <string name="hargaBarang">Harga Produk</string>
     <string name="stokbarang">Stok Barang</string>
     <string name="namaBarang">Nama Produk</string>
+    <string name="currentLocation">Lokasi Sekarang</string>
+    <string name="upd_Location">Perbarui Lokasi</string>
+    <string name="kelilingYuk">Keliling Yukk</string>
 </resources>

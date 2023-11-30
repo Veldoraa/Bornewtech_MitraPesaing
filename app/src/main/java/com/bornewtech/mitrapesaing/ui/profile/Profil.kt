@@ -54,8 +54,8 @@ class Profil : AppCompatActivity() {
         refProfil.get()
             .addOnSuccessListener {
                 if (it != null) {
-                    val nama = it.data?.get("Nama Lengkap").toString()
-                    val noHp = it.data?.get("No Hp/Wa Aktif").toString()
+                    val nama = it.data?.get("namaLengkap").toString()
+                    val noHp = it.data?.get("noHpAktif").toString()
 
                     binding.namaPengguna.setText(nama)
                     binding.noPengguna.setText(noHp)

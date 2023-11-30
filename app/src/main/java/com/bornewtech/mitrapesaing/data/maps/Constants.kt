@@ -2,7 +2,6 @@ package com.bornewtech.mitrapesaing.data.maps
 
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.heatmaps.WeightedLatLng
-import kotlin.random.Random
 
 object Constants {
 
@@ -28,7 +27,7 @@ object Constants {
             val data = dataSnapshot.getValue(RealtimeLatLng::class.java)
 //            println("Data from Firebase: $data")
             val cluster = data?.cluster ?: 0
-            val jumlah = data?.jmlh ?: 0
+            val jumlah = data?.jumlah ?: 0
             val latitude = data?.lat ?: 0.0
             val longitude = data?.lng ?: 0.0
 

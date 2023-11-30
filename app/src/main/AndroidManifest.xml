@@ -42,9 +42,6 @@
         <activity
             android:name=".ui.profile.ResetPassword"
             android:exported="false" />
-        <activity
-            android:name=".data.recyclerView.RecyclerProdukActivity"
-            android:exported="false" />
         <!--
              TODO: Before you run your application, you need a Google Maps API key.
 
