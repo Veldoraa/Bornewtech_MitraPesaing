@@ -6,6 +6,10 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
+import android.widget.Spinner
+import android.widget.ArrayAdapter
+import android.widget.AdapterView
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -56,7 +60,54 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
+
+        val spinner: Spinner = findViewById(R.id.dropdown_menu)
+
+        val items = listOf("3 Hari", "7 Hari", "30 Hari", "Semua Data")
+        val currentTimeStamp = System.currentTimeMillis() / 1000 // Ubah ke detik
+        val threeDaysAgo = currentTimeStamp - (3 * 24 * 60 * 60)
+        val sevenDaysAgo = currentTimeStamp - (7 * 24 * 60 * 60)
+        val thirtyDaysAgo = currentTimeStamp - (7 * 24 * 60 * 60)
+        val alldata = currentTimeStamp - (365 * 24 * 60 * 60)
+
+        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, items)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinner.adapter = adapter
+
+        // Menambahkan listener untuk menangani pemilihan opsi pada dropdown menu
+        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                val selectedItem = items[position]
+
+                if (selectedItem == "3 Hari") {
+                    addHeatmap(threeDaysAgo)
+                    Toast.makeText(applicationContext, "Option 1 dipilih", Toast.LENGTH_SHORT).show()
+                } else if (selectedItem == "7 Hari") {
+                    addHeatmap(sevenDaysAgo)
+                    Toast.makeText(applicationContext, "Option 2 dipilih", Toast.LENGTH_SHORT).show()
+                } else if (selectedItem == "30 Hari") {
+                    addHeatmap(thirtyDaysAgo)
+                    Toast.makeText(applicationContext, "Option 3 dipilih", Toast.LENGTH_SHORT).show()
+                } else if (selectedItem == "Semua Data") {
+                    addHeatmap(alldata)
+                    Toast.makeText(applicationContext, "Option 4 dipilih", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                // Metode ini akan dipanggil saat tidak ada opsi yang dipilih (pilihan kosong)
+                // Biasanya, tidak perlu melakukan tindakan khusus di sini
+            }
+        }
+
     }
+
+
 
     private fun enableMyLocation() {
         if (ContextCompat.checkSelfPermission(
@@ -126,33 +177,33 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
         return true
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val currentTimeStamp = System.currentTimeMillis() / 1000 // Ubah ke detik
-        val threeDaysAgo = currentTimeStamp - (3 * 24 * 60 * 60)
-        val sevenDaysAgo = currentTimeStamp - (7 * 24 * 60 * 60)
-        val thirtyDaysAgo = currentTimeStamp - (7 * 24 * 60 * 60)
-        val alldata = currentTimeStamp - (365 * 24 * 60 * 60)
-        when (item.itemId) {
-            R.id.item1 -> {
-                addHeatmap(threeDaysAgo)
-                return true
-            }
-            R.id.item2 -> {
-                addHeatmap(sevenDaysAgo)
-                return true
-            }
-            R.id.item3 -> {
-                addHeatmap(thirtyDaysAgo)
-
-                return true
-            }
-            R.id.item4 -> {
-                addHeatmap(alldata)
-                return true
-            }
-            else -> return false
-        }
-    }
+//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+//        val currentTimeStamp = System.currentTimeMillis() / 1000 // Ubah ke detik
+//        val threeDaysAgo = currentTimeStamp - (3 * 24 * 60 * 60)
+//        val sevenDaysAgo = currentTimeStamp - (7 * 24 * 60 * 60)
+//        val thirtyDaysAgo = currentTimeStamp - (7 * 24 * 60 * 60)
+//        val alldata = currentTimeStamp - (365 * 24 * 60 * 60)
+//        when (item.itemId) {
+//            R.id.item1 -> {
+//                addHeatmap(threeDaysAgo)
+//                return true
+//            }
+//            R.id.item2 -> {
+//                addHeatmap(sevenDaysAgo)
+//                return true
+//            }
+//            R.id.item3 -> {
+//                addHeatmap(thirtyDaysAgo)
+//
+//                return true
+//            }
+//            R.id.item4 -> {
+//                addHeatmap(alldata)
+//                return true
+//            }
+//            else -> return false
+//        }
+//    }
 
     data class Lokasi(val latitude: Double, val longitude: Double)
 
