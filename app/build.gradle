@@ -77,7 +77,9 @@ dependencies {
     // maps utils
     implementation 'com.google.maps.android:android-maps-utils:3.4.0'
     // maps services
-    implementation 'com.google.maps:google-maps-services:0.15.0'
+    implementation 'com.google.maps:google-maps-services:0.17.0'
+
+    implementation 'com.squareup.okhttp3:okhttp:4.9.3'
 
 
 
