@@ -66,8 +66,8 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
         val currentTimeStamp = System.currentTimeMillis() / 1000 // Ubah ke detik
         val threeDaysAgo = currentTimeStamp - (3 * 24 * 60 * 60)
         val sevenDaysAgo = currentTimeStamp - (7 * 24 * 60 * 60)
-        val thirtyDaysAgo = currentTimeStamp - (7 * 24 * 60 * 60)
-        val alldata = currentTimeStamp - (365 * 24 * 60 * 60)
+        val thirtyDaysAgo = currentTimeStamp - (30 * 24 * 60 * 60)
+        val alldata: Long = 1696118400
 
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, items)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -83,18 +83,23 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
             ) {
                 val selectedItem = items[position]
 
-                if (selectedItem == "3 Hari") {
-                    addHeatmap(threeDaysAgo)
-                    Toast.makeText(applicationContext, "Option 1 dipilih", Toast.LENGTH_SHORT).show()
-                } else if (selectedItem == "7 Hari") {
-                    addHeatmap(sevenDaysAgo)
-                    Toast.makeText(applicationContext, "Option 2 dipilih", Toast.LENGTH_SHORT).show()
-                } else if (selectedItem == "30 Hari") {
-                    addHeatmap(thirtyDaysAgo)
-                    Toast.makeText(applicationContext, "Option 3 dipilih", Toast.LENGTH_SHORT).show()
-                } else if (selectedItem == "Semua Data") {
-                    addHeatmap(alldata)
-                    Toast.makeText(applicationContext, "Option 4 dipilih", Toast.LENGTH_SHORT).show()
+                when (selectedItem) {
+                    "3 Hari" -> {
+                        addHeatmap(threeDaysAgo)
+                        Toast.makeText(applicationContext, "Option 1 dipilih", Toast.LENGTH_SHORT).show()
+                    }
+                    "7 Hari" -> {
+                        addHeatmap(sevenDaysAgo)
+                        Toast.makeText(applicationContext, "Option 2 dipilih", Toast.LENGTH_SHORT).show()
+                    }
+                    "30 Hari" -> {
+                        addHeatmap(thirtyDaysAgo)
+                        Toast.makeText(applicationContext, "Option 3 dipilih", Toast.LENGTH_SHORT).show()
+                    }
+                    "Semua Data" -> {
+                        addHeatmap(alldata)
+                        Toast.makeText(applicationContext, "Option 4 dipilih", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
 
