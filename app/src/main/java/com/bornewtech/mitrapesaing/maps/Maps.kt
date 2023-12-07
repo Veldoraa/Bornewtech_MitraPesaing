@@ -54,6 +54,7 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
         myButton = findViewById(R.id.myButton)
         myButton.setOnClickListener {
             goToCurrentLocation()
+
         }
 
         val mapFragment = supportFragmentManager
@@ -181,35 +182,7 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
         return true
     }
 
-//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-//        val currentTimeStamp = System.currentTimeMillis() / 1000 // Ubah ke detik
-//        val threeDaysAgo = currentTimeStamp - (3 * 24 * 60 * 60)
-//        val sevenDaysAgo = currentTimeStamp - (7 * 24 * 60 * 60)
-//        val thirtyDaysAgo = currentTimeStamp - (7 * 24 * 60 * 60)
-//        val alldata = currentTimeStamp - (365 * 24 * 60 * 60)
-//        when (item.itemId) {
-//            R.id.item1 -> {
-//                addHeatmap(threeDaysAgo)
-//                return true
-//            }
-//            R.id.item2 -> {
-//                addHeatmap(sevenDaysAgo)
-//                return true
-//            }
-//            R.id.item3 -> {
-//                addHeatmap(thirtyDaysAgo)
-//
-//                return true
-//            }
-//            R.id.item4 -> {
-//                addHeatmap(alldata)
-//                return true
-//            }
-//            else -> return false
-//        }
-//    }
-
-    data class Lokasi(val latitude: Double, val longitude: Double)
+    data class Lokasi(val latitude: Double, val longitude: Double, val cluster: Double)
 
     fun hitungJarak(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
         val radiusBumi = 6371 // Radius Bumi dalam kilometer
@@ -224,29 +197,10 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
         return radiusBumi * c // Jarak dalam kilometer
     }
 
-    fun temukanTitikTerdekat(lokasiReferensi: Lokasi, listTitik: List<Lokasi>): Lokasi? {
-        var titikTerdekat: Lokasi? = null
-        var jarakTerdekat = Double.MAX_VALUE
-
-        for (lokasi in listTitik) {
-            val jarak = hitungJarak(
-                lokasiReferensi.latitude, lokasiReferensi.longitude,
-                lokasi.latitude, lokasi.longitude
-            )
-
-            if (jarak < jarakTerdekat) {
-                jarakTerdekat = jarak
-                titikTerdekat = lokasi
-            }
-        }
-
-        return titikTerdekat
-    }
 
 
     private fun addHeatmap(waktu: Long) {
         val reference = FirebaseDatabase.getInstance().reference.child("data")
-//        val timestampAwal = 160000
 
         mMap.clear()
 
@@ -255,56 +209,48 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
 
         query.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-//                val yourDataList = mutableListOf<RealtimeLatLng>()
-
-                val heatmapData = ArrayList<WeightedLatLng>()
+                val heatmapData = ArrayList<Lokasi>()
 
                 for (snapshot in dataSnapshot.children) {
                     val cluster = snapshot.child("cluster").getValue(Int::class.java) ?: 0
-                    val timestamp = snapshot.child("timestamp").getValue(Int::class.java) ?: 0
-                    val jmlh = snapshot.child("jmlh").getValue(Int::class.java) ?: 0
                     val latitude = snapshot.child("lat").getValue(Double::class.java) ?: 0.0
                     val longitude = snapshot.child("lng").getValue(Double::class.java) ?: 0.0
 
-//                    val heatmapData = ArrayList<WeightedLatLng>()
-                    heatmapData.add(WeightedLatLng(LatLng(latitude, longitude), cluster.toDouble()))
-//                    println("Data from Firebase: $heatmapData")
+                    heatmapData.add(Lokasi(latitude, longitude, cluster.toDouble()))
                 }
 
-                // Contoh penggunaan:
-                val lokasiPengguna = Lokasi(37.7749, -122.4194)
-                val listTitik = listOf(
-                    Lokasi(34.0522, -118.2437),
-                    Lokasi(40.7128, -74.0060),
-                    Lokasi(41.8781, -87.6298)
-                )
+                val lokasiPengguna = Lokasi(-0.0554621096547283, 109.34865875418333, 0.0)
 
-                val titikTerdekat = temukanTitikTerdekat(lokasiPengguna, listTitik)
-                println("Titik terdekat: ${titikTerdekat?.latitude}, ${titikTerdekat?.longitude}")
+                // Filter titik-titik dengan nilai cluster lebih tinggi dari 5
+                val titikClusterTinggi = heatmapData.filter { Lokasi ->
+                    Lokasi.cluster > 5
+                }
 
+                val titikTerdekat = titikClusterTinggi.minByOrNull {
+                    hitungJarak(lokasiPengguna.latitude, lokasiPengguna.longitude, it.latitude, it.longitude)
+                }
 
+//                println("Titik terdekat: ${titikTerdekat?.latitude}, ${titikTerdekat?.longitude}")
+                Toast.makeText(this@Maps, "Titik Terdekat Adalah ${titikTerdekat?.latitude}, ${titikTerdekat?.longitude}", Toast.LENGTH_SHORT).show()
                 if (heatmapData.isNotEmpty()) {
                     val heatmapProvider = HeatmapTileProvider.Builder()
-                        .weightedData(heatmapData)
+                        .weightedData(heatmapData.map { WeightedLatLng(LatLng(it.latitude, it.longitude), it.cluster) })
                         .radius(20)
                         .maxIntensity(10.0)
                         .build()
 
-
                     mMap.addTileOverlay(TileOverlayOptions().tileProvider(heatmapProvider))
-
                 } else {
                     // Lakukan sesuatu jika heatmapData kosong, seperti menampilkan pesan
                     Log.d("Heatmap", "No input points available for heatmap")
                     Toast.makeText(this@Maps, "No input points available for heatmap", Toast.LENGTH_SHORT).show()
-
                     // ... Lakukan tindakan lainnya jika diperlukan
                 }
-
             }
 
             override fun onCancelled(error: DatabaseError) {
-                TODO("Not yet implemented")            }
+                // Penanganan jika terjadi pembatalan
+            }
         })
     }
 
