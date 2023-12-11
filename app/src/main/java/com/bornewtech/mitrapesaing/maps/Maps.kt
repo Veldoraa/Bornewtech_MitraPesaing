@@ -40,6 +40,7 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var mMap: GoogleMap
     private lateinit var binding: ActivityMapsBinding
     private lateinit var myButton: Button
+    private var heatmapData: ArrayList<Lokasi> = ArrayList()
 //    private lateinit var radioGroup: RadioGroup
 
 
@@ -111,7 +112,6 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
         }
 
     }
-
 
 
     private fun enableMyLocation() {
@@ -194,7 +194,7 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
                 sin(deltaLon / 2) * sin(deltaLon / 2)
         val c = 2 * atan2(sqrt(a), sqrt(1 - a))
 
-        return radiusBumi * c // Jarak dalam kilometer
+        return radiusBumi * c // Jarak d    alam kilometer
     }
 
 
@@ -218,6 +218,8 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
 
                     heatmapData.add(Lokasi(latitude, longitude, cluster.toDouble()))
                 }
+
+                this@Maps.heatmapData = heatmapData
 
                 val lokasiPengguna = Lokasi(-0.0554621096547283, 109.34865875418333, 0.0)
 
