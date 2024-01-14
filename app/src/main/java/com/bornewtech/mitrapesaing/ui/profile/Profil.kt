@@ -50,18 +50,32 @@ class Profil : AppCompatActivity() {
     }
     private fun setData() {
         val userId = FirebaseAuth.getInstance().currentUser!!.uid
-        val refProfil = dbProfil.collection("Profils").document(userId)
+        val refProfil = dbProfil.collection("Pedagang").document(userId)
+
         refProfil.get()
-            .addOnSuccessListener {
-                if (it != null) {
-                    val nama = it.data?.get("namaLengkap").toString()
-                    val noHp = it.data?.get("noHpAktif").toString()
+            .addOnSuccessListener { documentSnapshot ->
+                if (documentSnapshot.exists()) {
+                    val nama = documentSnapshot.getString("namaLengkap")
+                    val noHp = documentSnapshot.getString("noHpAktif")
 
                     binding.namaPengguna.setText(nama)
                     binding.noPengguna.setText(noHp)
+
+                    // Tambahkan ID dokumen sebagai field "userId"
+                    val userIdField = documentSnapshot.id
+                    refProfil.update("userId", userIdField)
+                        .addOnSuccessListener {
+                            // Field "userId" berhasil ditambahkan
+                            Toast.makeText(this, "Data profil berhasil dimuat", Toast.LENGTH_SHORT).show()
+                        }
+                        .addOnFailureListener {
+                            // Gagal menambahkan field "userId"
+                            Toast.makeText(this, "Gagal menambahkan field userId", Toast.LENGTH_SHORT).show()
+                        }
                 }
             }
             .addOnFailureListener {
+                // Gagal mendapatkan data profil
                 Toast.makeText(this, "Gagal mendapatkan data profil", Toast.LENGTH_SHORT).show()
             }
     }

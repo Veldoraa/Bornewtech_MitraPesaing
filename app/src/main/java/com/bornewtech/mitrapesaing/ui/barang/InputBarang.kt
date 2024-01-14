@@ -71,55 +71,66 @@ class InputBarang : AppCompatActivity() {
             val stok = binding.inpStok.text.toString().trim()
             val harga = binding.inpHarga.text.toString().trim()
 
-            val barangMap = hashMapOf(
-                "produkNama" to nama,
-                "produkKategori" to kategori,
-                "produkSatuan" to satuan,
-                "produkStok" to stok,
-                "produkHarga" to harga
-            )
+            // Mendapatkan ID pengguna yang sedang login
+            val pedagangId = FirebaseAuth.getInstance().currentUser?.uid
 
-            //Nambah Barang
-//            val userId = FirebaseAuth.getInstance().currentUser!!.uid
-//            dbBarang.collection("Products").document(userId).set(barangMap)
-            val userId = FirebaseAuth.getInstance().currentUser!!.uid
-            val databaseProduk = dbBarang.collection("Products").document(userId)
-            databaseProduk.update("productList", FieldValue.arrayUnion(barangMap))
-                .addOnSuccessListener {
-                    Toast.makeText(this, "Berhasil Memasukkan Data", Toast.LENGTH_SHORT).show()
-                    binding.inpNamaProduk.text.clear()
-                    binding.inpKategori.text.clear()
-                    binding.inpSatuan.text.clear()
-                    binding.inpStok.text.clear()
-                    binding.inpHarga.text.clear()
-                }
-                .addOnFailureListener {
-                    Toast.makeText(this, "Gagal Memasukkan Data", Toast.LENGTH_SHORT).show()
-                }
+            if (pedagangId != null) {
+                val barangMap = hashMapOf(
+                    "pedagangId" to pedagangId,
+                    "produkId" to generateRandomId(),
+                    "produkNama" to nama,
+                    "produkKategori" to kategori,
+                    "produkSatuan" to satuan,
+                    "produkStok" to stok,
+                    "produkHarga" to harga
+                )
 
-            // Nambah Gambar Barang
-            currentImageUri?.let { uri ->
-                storageRef.getReference("Gambar Barang")
-                    .child(System.currentTimeMillis().toString())
-                    .putFile(uri)
+                //Nambah Barang
+                val userId = FirebaseAuth.getInstance().currentUser!!.uid
+                val databaseProduk = dbBarang.collection("Products").document(userId)
+                databaseProduk.update("productList", FieldValue.arrayUnion(barangMap))
                     .addOnSuccessListener {
-                        val userId = FirebaseAuth.getInstance().currentUser!!.uid
-                        val mapImage = mapOf(
-                            "url" to it.toString()
-                        )
-                        val databaseReferences =
-                            FirebaseDatabase.getInstance().getReference("gambarBarang")
-                        databaseReferences.child(userId).setValue(mapImage)
-                            .addOnSuccessListener {
-                                Toast.makeText(this, "Sukses", Toast.LENGTH_SHORT).show()
-                            }
-                            .addOnFailureListener { error ->
-                                Toast.makeText(this, it.toString(), Toast.LENGTH_SHORT).show()
-                            }
+                        Toast.makeText(this, "Berhasil Memasukkan Data", Toast.LENGTH_SHORT).show()
+                        binding.inpNamaProduk.text.clear()
+                        binding.inpKategori.text.clear()
+                        binding.inpSatuan.text.clear()
+                        binding.inpStok.text.clear()
+                        binding.inpHarga.text.clear()
+                    }
+                    .addOnFailureListener {
+                        Toast.makeText(this, "Gagal Memasukkan Data", Toast.LENGTH_SHORT).show()
                     }
 
+                // Nambah Gambar Barang
+                currentImageUri?.let { uri ->
+                    storageRef.getReference("Gambar Barang")
+                        .child(System.currentTimeMillis().toString())
+                        .putFile(uri)
+                        .addOnSuccessListener {
+                            val mapImage = mapOf(
+                                "url" to it.toString()
+                            )
+                            val databaseReferences =
+                                FirebaseDatabase.getInstance().getReference("gambarBarang")
+                            databaseReferences.child(userId).setValue(mapImage)
+                                .addOnSuccessListener {
+                                    Toast.makeText(this, "Sukses", Toast.LENGTH_SHORT).show()
+                                }
+                                .addOnFailureListener { error ->
+                                    Toast.makeText(this, it.toString(), Toast.LENGTH_SHORT).show()
+                                }
+                        }
+                }
+            } else {
+                // Handle the case where user is not logged in
+                Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+    // Fungsi untuk menghasilkan ID random
+    private fun generateRandomId(): String {
+        // Logic untuk menghasilkan ID random, Anda bisa sesuaikan sesuai kebutuhan
+        return java.util.UUID.randomUUID().toString()
     }
 
 //    private fun checkLocationPermission() {
