@@ -31,24 +31,31 @@ class DetailBarang : AppCompatActivity() {
             binding.satuan.text = selectedItem.produkSatuan.toString()
             binding.stokBarang.text = selectedItem.produkStok.toString()
             binding.hargaBarang.text = selectedItem.produkHarga.toString()
-        }
 
-
-        val userId = FirebaseAuth.getInstance().currentUser!!.uid
-        val referensi = dbBarang.collection("Products").document(userId)
-        //get Data ke detail barang
-        referensi.get()
-            .addOnSuccessListener { document ->
-                if (document != null && document.exists()) {
-                    val array = document.get("productList") as ArrayList<*>
-                    if (array.isNotEmpty()){
-                        array[0]
+            // Dapatkan produkId dari Firestore berdasarkan produkNama
+            val userId = FirebaseAuth.getInstance().currentUser!!.uid
+            val referensi = dbBarang.collection("Products").document(userId)
+            referensi.get()
+                .addOnSuccessListener { document ->
+                    if (document != null && document.exists()) {
+                        val array = document.get("productList") as ArrayList<*>
+                        if (array.isNotEmpty()) {
+                            for (i in array.indices) {
+                                val produkMap = array[i] as Map<*, *>
+                                val produkNama = produkMap["produkNama"] as String
+                                if (produkNama == selectedItem.produkNama) {
+                                    val produkId = produkMap["produkId"] as String
+                                    Log.d("DetailBarang", "produkId: $produkId")
+                                    break // Keluar dari loop setelah menemukan produk yang sesuai
+                                }
+                            }
+                        }
                     }
                 }
+                .addOnFailureListener {
+                    Toast.makeText(this, "Gagal Menarik Data", Toast.LENGTH_SHORT).show()
+                }
         }
-            .addOnFailureListener {
-                Toast.makeText(this, "Gagal Menarik Data", Toast.LENGTH_SHORT).show()
-            }
         binding.btnUpdateBarang.setOnClickListener {
             val intent = Intent(this, EditBarang::class.java)
             intent.putExtra("selectedItem", selectedItem)

@@ -7,6 +7,8 @@ data class Products(
 )
 
 data class ProductItem(
+    val produkId: String? = null,
+    val pedagangId: String? = null,
     val produkStok: String? = null,
     val produkNama: String? = null,
     val produkKategori: String? = null,
