@@ -40,13 +40,10 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var mMap: GoogleMap
     private lateinit var binding: ActivityMapsBinding
     private lateinit var myButton: Button
+    private var heatmapData: ArrayList<Lokasi> = ArrayList()
+//    private var currentLocation: LatLng? = null
 //    private lateinit var radioGroup: RadioGroup
 
-    // Declare the time variables at the class level
-    private var threeDaysAgo: Long = 0
-    private var sevenDaysAgo: Long = 0
-    private var thirtyDaysAgo: Long = 0
-    private var alldata: Long = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,6 +56,7 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
         myButton = findViewById(R.id.myButton)
         myButton.setOnClickListener {
             goToCurrentLocation()
+
         }
 
         val mapFragment = supportFragmentManager
@@ -68,11 +66,11 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
         val spinner: Spinner = findViewById(R.id.dropdown_menu)
 
         val items = listOf("3 Hari", "7 Hari", "30 Hari", "Semua Data")
-        val currentTimeStamp = System.currentTimeMillis() / 1000 // Convert to seconds
+        val currentTimeStamp = System.currentTimeMillis() / 1000 // Ubah ke detik
         val threeDaysAgo = currentTimeStamp - (3 * 24 * 60 * 60)
         val sevenDaysAgo = currentTimeStamp - (7 * 24 * 60 * 60)
-        val thirtyDaysAgo = currentTimeStamp - (30 * 24 * 60 * 60) // Corrected
-        val alldata = currentTimeStamp - (365 * 24 * 60 * 60)
+        val thirtyDaysAgo = currentTimeStamp - (30 * 24 * 60 * 60)
+        val alldata: Long = 1696118400
 
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, items)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -87,20 +85,24 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
                 id: Long
             ) {
                 val selectedItem = items[position]
-                addHeatmap(selectedItem)
 
-                if (selectedItem == "3 Hari") {
-                    addHeatmap(threeDaysAgo.toString())
-                    Toast.makeText(applicationContext, "Option 1 dipilih", Toast.LENGTH_SHORT).show()
-                } else if (selectedItem == "7 Hari") {
-                    addHeatmap(sevenDaysAgo.toString())
-                    Toast.makeText(applicationContext, "Option 2 dipilih", Toast.LENGTH_SHORT).show()
-                } else if (selectedItem == "30 Hari") {
-                    addHeatmap(thirtyDaysAgo.toString())
-                    Toast.makeText(applicationContext, "Option 3 dipilih", Toast.LENGTH_SHORT).show()
-                } else if (selectedItem == "Semua Data") {
-                    addHeatmap(alldata.toString())
-                    Toast.makeText(applicationContext, "Option 4 dipilih", Toast.LENGTH_SHORT).show()
+                when (selectedItem) {
+                    "3 Hari" -> {
+                        addHeatmap(threeDaysAgo)
+                        Toast.makeText(applicationContext, "Option 1 dipilih", Toast.LENGTH_SHORT).show()
+                    }
+                    "7 Hari" -> {
+                        addHeatmap(sevenDaysAgo)
+                        Toast.makeText(applicationContext, "Option 2 dipilih", Toast.LENGTH_SHORT).show()
+                    }
+                    "30 Hari" -> {
+                        addHeatmap(thirtyDaysAgo)
+                        Toast.makeText(applicationContext, "Option 3 dipilih", Toast.LENGTH_SHORT).show()
+                    }
+                    "Semua Data" -> {
+                        addHeatmap(alldata)
+                        Toast.makeText(applicationContext, "Option 4 dipilih", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
 
@@ -112,8 +114,10 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
 
     }
 
-
-
+    //tambah marker
+    private fun addCustomMarker(position: LatLng, title: String) {
+        mMap.addMarker(MarkerOptions().position(position).title(title))
+    }
     private fun enableMyLocation() {
         if (ContextCompat.checkSelfPermission(
                 this,
@@ -140,6 +144,21 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
             mMap.setOnMyLocationChangeListener {
                 val currentLocation = LatLng(it.latitude, it.longitude)
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15f))
+
+                val titikClusterTinggi = heatmapData.filter { Lokasi ->
+                    Lokasi.cluster > 5
+                }
+
+                val titikTerdekat = titikClusterTinggi.minByOrNull {
+                    hitungJarak(currentLocation.latitude,currentLocation.longitude, it.latitude, it.longitude)
+                }
+
+                if (titikTerdekat != null) {
+                    addCustomMarker(LatLng(titikTerdekat.latitude, titikTerdekat.longitude), "Titik Terdekat")
+                }
+
+//                println("Titik terdekat: ${titikTerdekat?.latitude}, ${titikTerdekat?.longitude}")
+                Toast.makeText(this@Maps, "Titik Terdekat Adalah ${titikTerdekat?.latitude}, ${titikTerdekat?.longitude}", Toast.LENGTH_SHORT).show()
             }
         } else {
             Toast.makeText(this, "Location permission denied", Toast.LENGTH_SHORT).show()
@@ -182,35 +201,7 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
         return true
     }
 
-//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-//        val currentTimeStamp = System.currentTimeMillis() / 1000 // Ubah ke detik
-//        val threeDaysAgo = currentTimeStamp - (3 * 24 * 60 * 60)
-//        val sevenDaysAgo = currentTimeStamp - (7 * 24 * 60 * 60)
-//        val thirtyDaysAgo = currentTimeStamp - (7 * 24 * 60 * 60)
-//        val alldata = currentTimeStamp - (365 * 24 * 60 * 60)
-//        when (item.itemId) {
-//            R.id.item1 -> {
-//                addHeatmap(threeDaysAgo)
-//                return true
-//            }
-//            R.id.item2 -> {
-//                addHeatmap(sevenDaysAgo)
-//                return true
-//            }
-//            R.id.item3 -> {
-//                addHeatmap(thirtyDaysAgo)
-//
-//                return true
-//            }
-//            R.id.item4 -> {
-//                addHeatmap(alldata)
-//                return true
-//            }
-//            else -> return false
-//        }
-//    }
-
-    data class Lokasi(val latitude: Double, val longitude: Double)
+    data class Lokasi(val latitude: Double, val longitude: Double, val cluster: Double)
 
     fun hitungJarak(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
         val radiusBumi = 6371 // Radius Bumi dalam kilometer
@@ -222,76 +213,66 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
                 sin(deltaLon / 2) * sin(deltaLon / 2)
         val c = 2 * atan2(sqrt(a), sqrt(1 - a))
 
-        return radiusBumi * c // Jarak dalam kilometer
-    }
-
-    fun temukanTitikTerdekat(lokasiReferensi: Lokasi, listTitik: List<Lokasi>): Lokasi? {
-        var titikTerdekat: Lokasi? = null
-        var jarakTerdekat = Double.MAX_VALUE
-
-        for (lokasi in listTitik) {
-            val jarak = hitungJarak(
-                lokasiReferensi.latitude, lokasiReferensi.longitude,
-                lokasi.latitude, lokasi.longitude
-            )
-
-            if (jarak < jarakTerdekat) {
-                jarakTerdekat = jarak
-                titikTerdekat = lokasi
-            }
-        }
-
-        return titikTerdekat
+        return radiusBumi * c // Jarak d    alam kilometer
     }
 
 
-    private fun addHeatmap(kategoriWaktu: String) {
+
+    private fun addHeatmap(waktu: Long) {
         val reference = FirebaseDatabase.getInstance().reference.child("data")
 
-        // Membersihkan peta (hapus heatmap sebelumnya)
         mMap.clear()
 
-        // Mendapatkan waktu berdasarkan kategori yang dipilih
-        val waktu: Long = when (kategoriWaktu) {
-            "3 Hari" -> threeDaysAgo
-            "7 Hari" -> sevenDaysAgo
-            "30 Hari" -> thirtyDaysAgo
-            "Semua Data" -> alldata
-            else -> 0
-        }
-
-        // Membuat query untuk mengambil data berdasarkan timestamp
+        //      Membuat query untuk mengambil data berdasarkan timestamp
         val query = reference.orderByChild("timestamp").startAt(waktu.toDouble())
 
         query.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val heatmapData = ArrayList<WeightedLatLng>()
+                val heatmapData = ArrayList<Lokasi>()
 
                 for (snapshot in dataSnapshot.children) {
+                    val cluster = snapshot.child("cluster").getValue(Int::class.java) ?: 0
                     val latitude = snapshot.child("lat").getValue(Double::class.java) ?: 0.0
                     val longitude = snapshot.child("lng").getValue(Double::class.java) ?: 0.0
 
-                    heatmapData.add(WeightedLatLng(LatLng(latitude, longitude), 1.0))
+                    heatmapData.add(Lokasi(latitude, longitude, cluster.toDouble()))
                 }
 
+                this@Maps.heatmapData = heatmapData
+
+//                val lokasiPengguna = currentLocation
+//                val titikClusterTinggi = heatmapData.filter { Lokasi ->
+//                    Lokasi.cluster > 5
+//                }
+//
+//                val titikTerdekat = titikClusterTinggi.minByOrNull {
+//                    hitungJarak(currentLocation.latitude, currentLocation.longitude, it.latitude, it.longitude)
+//                }
+//
+////                println("Titik terdekat: ${titikTerdekat?.latitude}, ${titikTerdekat?.longitude}")
+//                Toast.makeText(this@Maps, "Titik Terdekat Adalah ${titikTerdekat?.latitude}, ${titikTerdekat?.longitude}", Toast.LENGTH_SHORT).show()
+
+                // Filter titik-titik dengan nilai cluster lebih tinggi dari 5
                 if (heatmapData.isNotEmpty()) {
-                    // Sesuaikan pengaturan HeatmapTileProvider
                     val heatmapProvider = HeatmapTileProvider.Builder()
-                        .weightedData(heatmapData)
-                        .radius(50)  // Sesuaikan radius sesuai kebutuhan
+                        .weightedData(heatmapData.map { WeightedLatLng(LatLng(it.latitude, it.longitude), it.cluster) })
+                        .radius(20)
                         .maxIntensity(10.0)
                         .build()
 
                     mMap.addTileOverlay(TileOverlayOptions().tileProvider(heatmapProvider))
                 } else {
+                    // Lakukan sesuatu jika heatmapData kosong, seperti menampilkan pesan
                     Log.d("Heatmap", "No input points available for heatmap")
                     Toast.makeText(this@Maps, "No input points available for heatmap", Toast.LENGTH_SHORT).show()
+                    // ... Lakukan tindakan lainnya jika diperlukan
                 }
             }
 
             override fun onCancelled(error: DatabaseError) {
-                // Handle onCancelled if needed
+                // Penanganan jika terjadi pembatalan
             }
         })
     }
+
 }
