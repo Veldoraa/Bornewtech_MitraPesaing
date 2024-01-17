@@ -1,6 +1,7 @@
 package com.bornewtech.mitrapesaing.maps
 
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -19,6 +20,8 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.Circle
+import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.TileOverlayOptions
@@ -41,6 +44,8 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var binding: ActivityMapsBinding
     private lateinit var myButton: Button
     private var heatmapData: ArrayList<Lokasi> = ArrayList()
+    private var titikClusterTinggi: ArrayList<Lokasi> = ArrayList()
+    private var radiusCircle: Circle? = null
 //    private var currentLocation: LatLng? = null
 //    private lateinit var radioGroup: RadioGroup
 
@@ -145,9 +150,12 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
                 val currentLocation = LatLng(it.latitude, it.longitude)
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15f))
 
-                val titikClusterTinggi = heatmapData.filter { Lokasi ->
+
+                val titikClusterFiltered = heatmapData.filter { Lokasi ->
                     Lokasi.cluster > 5
                 }
+
+                titikClusterTinggi = titikClusterFiltered as ArrayList<Lokasi>
 
                 val titikTerdekat = titikClusterTinggi.minByOrNull {
                     hitungJarak(currentLocation.latitude,currentLocation.longitude, it.latitude, it.longitude)
@@ -157,7 +165,25 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
                     addCustomMarker(LatLng(titikTerdekat.latitude, titikTerdekat.longitude), "Titik Terdekat")
                 }
 
-//                println("Titik terdekat: ${titikTerdekat?.latitude}, ${titikTerdekat?.longitude}")
+
+                // Hapus lingkaran sebelum menambahkan yang baru
+                radiusCircle?.remove()
+
+                // Tambahkan lingkaran (radius) di sekitar lokasi saat ini
+                radiusCircle = mMap.addCircle(
+                    CircleOptions()
+                        .center(currentLocation)
+                        .radius(1000.0) // Ganti dengan radius yang diinginkan dalam meter
+                        .strokeColor(Color.argb(128, 255, 0, 0)) // Warna garis lingkaran dengan transparansi
+                        .fillColor(Color.argb(128, 255, 0, 0)) // Warna isi lingkaran dengan transparansi
+                )
+
+                val heatmapDataWithinRadius = heatmapData.filter { lokasi ->
+                    hitungJarak(currentLocation.latitude, currentLocation.longitude, lokasi.latitude, lokasi.longitude) <= 100.0
+                } as ArrayList<Lokasi>
+                // Tampilkan heatmap hanya untuk data yang berada dalam radius lingkaran
+//                showHeatmap(heatmapDataWithinRadius)
+
                 Toast.makeText(this@Maps, "Titik Terdekat Adalah ${titikTerdekat?.latitude}, ${titikTerdekat?.longitude}", Toast.LENGTH_SHORT).show()
             }
         } else {
@@ -188,7 +214,7 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
         val minZoomLevel = 13.0f
-        mMap.setMinZoomPreference(minZoomLevel)
+//        mMap.setMinZoomPreference(minZoomLevel)
         // Add a marker in Sydney and move the camera
         val pontianak = LatLng(-0.02800127398174045, 109.34220099978418)
         mMap.addMarker(MarkerOptions().position(pontianak).title("Marker di Pontianak"))
@@ -217,6 +243,26 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
     }
 
 
+    private fun showHeatmap(data: ArrayList<Lokasi>) {
+        mMap.clear()
+
+        val data = titikClusterTinggi
+
+        if (data.isNotEmpty()) {
+            val heatmapProvider = HeatmapTileProvider.Builder()
+                .weightedData(data.map { WeightedLatLng(LatLng(it.latitude, it.longitude), it.cluster) })
+                .radius(20)
+                .maxIntensity(10.0)
+                .build()
+
+            mMap.addTileOverlay(TileOverlayOptions().tileProvider(heatmapProvider))
+        } else {
+            // Lakukan sesuatu jika heatmapDataWithinRadius kosong, seperti menampilkan pesan
+            Log.d("Heatmap", "No input points available for heatmap within radius")
+            Toast.makeText(this@Maps, "No input points available for heatmap within radius", Toast.LENGTH_SHORT).show()
+            // ... Lakukan tindakan lainnya jika diperlukan
+        }
+    }
 
     private fun addHeatmap(waktu: Long) {
         val reference = FirebaseDatabase.getInstance().reference.child("data")
@@ -240,17 +286,6 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
 
                 this@Maps.heatmapData = heatmapData
 
-//                val lokasiPengguna = currentLocation
-//                val titikClusterTinggi = heatmapData.filter { Lokasi ->
-//                    Lokasi.cluster > 5
-//                }
-//
-//                val titikTerdekat = titikClusterTinggi.minByOrNull {
-//                    hitungJarak(currentLocation.latitude, currentLocation.longitude, it.latitude, it.longitude)
-//                }
-//
-////                println("Titik terdekat: ${titikTerdekat?.latitude}, ${titikTerdekat?.longitude}")
-//                Toast.makeText(this@Maps, "Titik Terdekat Adalah ${titikTerdekat?.latitude}, ${titikTerdekat?.longitude}", Toast.LENGTH_SHORT).show()
 
                 // Filter titik-titik dengan nilai cluster lebih tinggi dari 5
                 if (heatmapData.isNotEmpty()) {
