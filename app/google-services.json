@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "459139532605",
+    "firebase_url": "https://pesaing-bornewtech-default-rtdb.firebaseio.com",
     "project_id": "pesaing-bornewtech",
     "storage_bucket": "pesaing-bornewtech.appspot.com"
   },
@@ -14,11 +15,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "459139532605-utpd897qm6901o45umm1qjb4ee93gjfr.apps.googleusercontent.com",
+          "client_id": "459139532605-rnpmlrr3i9qau35udpj5q7ouongak1me.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.bornewtech.marketplacepesaing",
-            "certificate_hash": "3c5f6ebde810bed1780da575277c7067e15ccb12"
+            "certificate_hash": "34833e7a680ef85f6229bec6343d32ae9a3639c2"
           }
         },
         {
@@ -51,11 +52,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "459139532605-590bd5vhk7d2dbd7hb2rjdbv88peil7o.apps.googleusercontent.com",
+          "client_id": "459139532605-3a01vs3c40vbuh1tl3uk6k2jg243susi.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.bornewtech.mitrapesaing",
-            "certificate_hash": "daa24ec73673aef371cd7f65bf8d933bf22845a8"
+            "certificate_hash": "6cf1fcbb5a439df09d98aca43cbbf9a41cec88ee"
           }
         },
         {
