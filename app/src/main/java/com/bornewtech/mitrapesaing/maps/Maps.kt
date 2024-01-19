@@ -24,14 +24,24 @@ import com.google.android.gms.maps.model.Circle
 import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.PolylineOptions
 import com.google.android.gms.maps.model.TileOverlayOptions
 import com.google.firebase.FirebaseApp
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.maps.DirectionsApi
+import com.google.maps.DirectionsApiRequest
+import com.google.maps.GeoApiContext
 import com.google.maps.android.heatmaps.HeatmapTileProvider
 import com.google.maps.android.heatmaps.WeightedLatLng
+import com.google.maps.model.DirectionsLeg
+import com.google.maps.model.DirectionsResult
+import com.google.maps.model.DirectionsRoute
+import com.google.maps.model.TravelMode
+import com.google.maps.model.Unit
+import com.google.maps.android.PolyUtil
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
@@ -46,6 +56,7 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
     private var heatmapData: ArrayList<Lokasi> = ArrayList()
     private var titikClusterTinggi: ArrayList<Lokasi> = ArrayList()
     private var radiusCircle: Circle? = null
+    private lateinit var apiKey: String // Variabel untuk menyimpan kunci API
 //    private var currentLocation: LatLng? = null
 //    private lateinit var radioGroup: RadioGroup
 
@@ -57,6 +68,9 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
 
         // Inisialisasi Firebase
         FirebaseApp.initializeApp(this)
+
+        // Mendapatkan kunci API dari strings.xml
+        apiKey = getString(R.string.google_maps_api_key)
 
         myButton = findViewById(R.id.myButton)
         myButton.setOnClickListener {
@@ -163,20 +177,57 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
 
                 if (titikTerdekat != null) {
                     addCustomMarker(LatLng(titikTerdekat.latitude, titikTerdekat.longitude), "Titik Terdekat")
+//                    if (titikTerdekat != null) {
+//                        val geoApiContext = GeoApiContext.Builder()
+//                            .api Key(apiKey)
+//                            .build()
+//
+//                        val request: DirectionsApiRequest = DirectionsApi.newRequest(geoApiContext)
+//                            .origin(currentLocation.latitude.toString() + "," + currentLocation.longitude)
+//                            .destination(titikTerdekat!!.latitude.toString() + "," + titikTerdekat!!.longitude)
+//                            .mode(TravelMode.DRIVING)
+//                            .units(Unit.METRIC)
+//
+//                        try {
+//                            val result: DirectionsResult = request.await()
+//
+//                            if (result.routes != null && result.routes.isNotEmpty()) {
+//                                val route: DirectionsRoute = result.routes[0]
+//                                val leg: DirectionsLeg = route.legs[0]
+//
+//                                val polylineOptions = PolylineOptions()
+//                                    .addAll(PolyUtil.decode(leg.overviewPolyline.encodedPath))
+//                                    .color(Color.BLUE)
+//                                    .width(5f)
+//
+//                                mMap.addPolyline(polylineOptions)
+//                            }
+//                        } catch (e: Exception) {
+//                            e.printStackTrace()
+//                        }
+//                    }
                 }
 
 
                 // Hapus lingkaran sebelum menambahkan yang baru
-                radiusCircle?.remove()
+//                radiusCircle?.remove()
 
                 // Tambahkan lingkaran (radius) di sekitar lokasi saat ini
-                radiusCircle = mMap.addCircle(
-                    CircleOptions()
-                        .center(currentLocation)
-                        .radius(1000.0) // Ganti dengan radius yang diinginkan dalam meter
-                        .strokeColor(Color.argb(128, 255, 0, 0)) // Warna garis lingkaran dengan transparansi
-                        .fillColor(Color.argb(128, 255, 0, 0)) // Warna isi lingkaran dengan transparansi
-                )
+//                radiusCircle = mMap.addCircle(
+//                    CircleOptions()
+//                        .center(currentLocation)
+//                        .radius(1000.0) // Ganti dengan radius yang diinginkan dalam meter
+//                        .strokeColor(Color.argb(128, 255, 0, 0)) // Warna garis lingkaran dengan transparansi
+//                        .fillColor(Color.argb(128, 255, 0, 0)) // Warna isi lingkaran dengan transparansi
+//                )
+
+                val latLngOrigin = currentLocation // Ayala
+                val latLngDestination = LatLng(titikTerdekat!!.latitude, titikTerdekat!!.longitude) // SM City
+                this.mMap!!.addMarker(MarkerOptions().position(latLngOrigin).title("Ayala"))
+                this.mMap!!.addMarker(MarkerOptions().position(latLngDestination).title("SM City"))
+                this.mMap!!.moveCamera(CameraUpdateFactory.newLatLngZoom(latLngOrigin, 14.5f))
+                val path: MutableList<List<LatLng>> = ArrayList()
+
 
                 val heatmapDataWithinRadius = heatmapData.filter { lokasi ->
                     hitungJarak(currentLocation.latitude, currentLocation.longitude, lokasi.latitude, lokasi.longitude) <= 100.0
@@ -184,7 +235,8 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
                 // Tampilkan heatmap hanya untuk data yang berada dalam radius lingkaran
 //                showHeatmap(heatmapDataWithinRadius)
 
-                Toast.makeText(this@Maps, "Titik Terdekat Adalah ${titikTerdekat?.latitude}, ${titikTerdekat?.longitude}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@Maps, "Titik Terdekat Adalah ${titikTerdekat?.latitude}, " +
+                        "${titikTerdekat?.longitude}", Toast.LENGTH_SHORT).show()
             }
         } else {
             Toast.makeText(this, "Location permission denied", Toast.LENGTH_SHORT).show()
@@ -239,7 +291,7 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
                 sin(deltaLon / 2) * sin(deltaLon / 2)
         val c = 2 * atan2(sqrt(a), sqrt(1 - a))
 
-        return radiusBumi * c // Jarak d    alam kilometer
+        return radiusBumi * c // Jarak dalam kilometer
     }
 
 
