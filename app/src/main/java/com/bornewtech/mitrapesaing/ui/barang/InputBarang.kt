@@ -4,11 +4,14 @@ import android.Manifest
 import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.location.Geocoder
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.PowerManager
+import android.provider.MediaStore
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -32,6 +35,8 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
+import java.io.ByteArrayOutputStream
+import java.io.FileOutputStream
 import java.io.IOException
 import java.util.Locale
 
@@ -41,8 +46,6 @@ class InputBarang : AppCompatActivity() {
     private var currentImageUri: Uri? = null
     private var dbBarang = Firebase.firestore
     private var storageRef = Firebase.storage
-    private lateinit var locationRequest: LocationRequest
-    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,80 +55,11 @@ class InputBarang : AppCompatActivity() {
 
         storageRef = FirebaseStorage.getInstance()
 
-//        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-//
-//        // share location
-//        binding.cbShareLoc.setOnClickListener(){
-//            // check self permission
-//            checkLocationPermission()
-//        }
-
         binding.btnGallery.setOnClickListener { startGallery() }
         binding.btnCamera.setOnClickListener { startCamera() }
 
 
-        binding.btnTambahBarang.setOnClickListener {
-            val nama = binding.inpNamaProduk.text.toString().trim()
-            val kategori = binding.inpKategori.text.toString().trim()
-            val satuan = binding.inpSatuan.text.toString().trim()
-            val stok = binding.inpStok.text.toString().trim()
-            val harga = binding.inpHarga.text.toString().trim()
-
-            // Mendapatkan ID pengguna yang sedang login
-            val pedagangId = FirebaseAuth.getInstance().currentUser?.uid
-
-            if (pedagangId != null) {
-                val barangMap = hashMapOf(
-                    "pedagangId" to pedagangId,
-                    "produkId" to generateRandomId(),
-                    "produkNama" to nama,
-                    "produkKategori" to kategori,
-                    "produkSatuan" to satuan,
-                    "produkStok" to stok,
-                    "produkHarga" to harga
-                )
-
-                //Nambah Barang
-                val userId = FirebaseAuth.getInstance().currentUser!!.uid
-                val databaseProduk = dbBarang.collection("Products").document(userId)
-                databaseProduk.update("productList", FieldValue.arrayUnion(barangMap))
-                    .addOnSuccessListener {
-                        Toast.makeText(this, "Berhasil Memasukkan Data", Toast.LENGTH_SHORT).show()
-                        binding.inpNamaProduk.text.clear()
-                        binding.inpKategori.text.clear()
-                        binding.inpSatuan.text.clear()
-                        binding.inpStok.text.clear()
-                        binding.inpHarga.text.clear()
-                    }
-                    .addOnFailureListener {
-                        Toast.makeText(this, "Gagal Memasukkan Data", Toast.LENGTH_SHORT).show()
-                    }
-
-                // Nambah Gambar Barang
-                currentImageUri?.let { uri ->
-                    storageRef.getReference("Gambar Barang")
-                        .child(System.currentTimeMillis().toString())
-                        .putFile(uri)
-                        .addOnSuccessListener {
-                            val mapImage = mapOf(
-                                "url" to it.toString()
-                            )
-                            val databaseReferences =
-                                FirebaseDatabase.getInstance().getReference("gambarBarang")
-                            databaseReferences.child(userId).setValue(mapImage)
-                                .addOnSuccessListener {
-                                    Toast.makeText(this, "Sukses", Toast.LENGTH_SHORT).show()
-                                }
-                                .addOnFailureListener { error ->
-                                    Toast.makeText(this, it.toString(), Toast.LENGTH_SHORT).show()
-                                }
-                        }
-                }
-            } else {
-                // Handle the case where user is not logged in
-                Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show()
-            }
-        }
+        binding.btnTambahBarang.setOnClickListener { saveData() }
     }
     // Fungsi untuk menghasilkan ID random
     private fun generateRandomId(): String {
@@ -133,115 +67,18 @@ class InputBarang : AppCompatActivity() {
         return java.util.UUID.randomUUID().toString()
     }
 
-//    private fun checkLocationPermission() {
-//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-//            // when permission already grant
-//            checkGPS()
-//        } else {
-//            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1001)
-//        }
-//    }
-//
-//    private fun checkGPS() {
-//        locationRequest = LocationRequest.create()
-//        locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-//        locationRequest.interval = 5000
-//        locationRequest.fastestInterval = 2000
-//
-//        val builder = LocationSettingsRequest.Builder()
-//            .addLocationRequest(locationRequest)
-//        builder.setAlwaysShow(true)
-//
-//        val result = LocationServices.getSettingsClient(
-//            this.applicationContext
-//        )
-//            .checkLocationSettings(builder.build())
-//        result.addOnCompleteListener { task ->
-//            try {
-//                // ketika GPS on
-//                val respone = task.getResult(
-//                    ApiException::class.java
-//                )
-//                getUserLocation()
-//            } catch (e: ApiException){
-//                // ketika GPS off
-//                e.printStackTrace()
-//                when (e.statusCode){
-//                    LocationSettingsStatusCodes.RESOLUTION_REQUIRED -> try {
-//                        // kita mengirim request untuk enable gps
-//                        val resolvableApiException = e as ResolvableApiException
-//                        resolvableApiException.startResolutionForResult(this, 1001)
-//                    } catch (sendIntentException : IntentSender.SendIntentException) {
-//                    }
-//                    LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE -> {
-//                        //ketika setting unavailable
-//                    }
-//                }
-//            }
-//        }
-//    }
-//
-//    private fun getUserLocation() {
-//        if (ActivityCompat.checkSelfPermission(
-//                this,
-//                Manifest.permission.ACCESS_FINE_LOCATION
-//            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-//                this,
-//                Manifest.permission.ACCESS_COARSE_LOCATION
-//            ) != PackageManager.PERMISSION_GRANTED
-//        ) {
-//            // TODO: Consider calling
-//            //    ActivityCompat#requestPermissions
-//            // here to request the missing permissions, and then overriding
-//            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-//            //                                          int[] grantResults)
-//            // to handle the case where the user grants the permission. See the documentation
-//            // for ActivityCompat#requestPermissions for more details.
-//            return
-//        }
-//        fusedLocationProviderClient.lastLocation.addOnCompleteListener { task ->
-//            val location = task.getResult()
-//            if (location != null){
-//                try {
-//                    val geocoder = Geocoder(this, Locale.getDefault())
-//                    val address = geocoder.getFromLocation(location.latitude, location.longitude, 1)
-//                    // set alamat di dalam textview loc_text
-//                    val address_line = address?.get(0)?.getAddressLine(0)
-//                    binding.locText.setText(address_line)
-//                    val address_location = address?.get(0)?.getAddressLine(0)
-//
-//                    openLocation(address_location.toString())
-//                } catch (e: IOException){
-//
-//                }
-//            }
-//        }
-//    }
-//
-//    private fun openLocation(location: String) {
-//        // open lokasi di google map
-//        // set button klik
-//        binding.locText.setOnClickListener() {
-//            if (!binding.locText.text.isEmpty()){
-//                // ketika lokasi tidak kosong
-//                val uri = Uri.parse("geo:0, 0?q=$location")
-//                val intent = Intent(Intent.ACTION_VIEW, uri)
-//                intent.setPackage("com.google.android.apps.maps")
-//                startActivity(intent)
-//            }
-//        }
-//    }
-
     // Upload gambar dengan galeri
     private fun startGallery() {
         launcherGallery.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
     }
-    // ngelaunch galeri
+
     private val launcherGallery = registerForActivityResult(
         ActivityResultContracts.PickVisualMedia()
     ) { uri: Uri? ->
         if (uri != null) {
             currentImageUri = uri
+            // Simpan data gambar ke Firebase Storage dan Firestore
+//            saveImageData()
             showImage()
         } else {
             Log.d("Photo Picker", "No media selected")
@@ -253,11 +90,13 @@ class InputBarang : AppCompatActivity() {
         currentImageUri = getImageUri(this)
         launcherIntentCamera.launch(currentImageUri)
     }
-    // ngelaunch camera
+
     private val launcherIntentCamera = registerForActivityResult(
         ActivityResultContracts.TakePicture()
     ) { isSuccess ->
         if (isSuccess) {
+            // Simpan data gambar ke Firebase Storage dan Firestore
+//            saveImageData()
             showImage()
         }
     }
@@ -267,6 +106,104 @@ class InputBarang : AppCompatActivity() {
         currentImageUri?.let {
             Log.d("Image URI", "showImage: $it")
             binding.ivgambarBarang.setImageURI(it)
+        }
+    }
+
+    //save data
+    private fun saveData() {
+        val nama = binding.inpNamaProduk.text.toString().trim()
+        val kategori = binding.inpKategori.text.toString().trim()
+        val satuan = binding.inpSatuan.text.toString().trim()
+        val stok = binding.inpStok.text.toString().trim()
+        val harga = binding.inpHarga.text.toString().trim()
+
+        // Mendapatkan ID pengguna yang sedang login
+        val pedagangId = FirebaseAuth.getInstance().currentUser?.uid
+
+        if (pedagangId != null) {
+            // Continue with image upload
+            currentImageUri?.let { uri ->
+                uploadImage(uri, pedagangId, nama, kategori, satuan, stok, harga)
+            } ?: run {
+                Toast.makeText(this, "Image URI is null", Toast.LENGTH_SHORT).show()
+            }
+        } else {
+            // Handle the case where the user is not logged in
+            Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun uploadImage(uri: Uri, pedagangId: String, nama: String, kategori: String, satuan: String, stok: String, harga: String) {
+        val storageReference = storageRef.getReference("Gambar Barang")
+            .child(System.currentTimeMillis().toString())
+
+        // Kompresi gambar sebelum mengunggah
+        val compressedUri = compressImage(uri)
+        if (compressedUri != null) {
+            storageReference.putFile(compressedUri)
+                .addOnSuccessListener { taskSnapshot ->
+                    // Dapatkan URL gambar setelah berhasil di-upload
+                    storageReference.downloadUrl.addOnSuccessListener { downloadUri ->
+                        val imageUrl = downloadUri.toString()
+
+                        // Memasukkan imageUrl ke dalam barangMap
+                        val barangMap = hashMapOf(
+                            "pedagangId" to pedagangId,
+                            "produkId" to generateRandomId(),
+                            "produkNama" to nama,
+                            "produkKategori" to kategori,
+                            "produkSatuan" to satuan,
+                            "produkStok" to stok,
+                            "produkHarga" to harga,
+                            "imageUrl" to imageUrl
+                        )
+
+                        // Nambah Barang
+                        val userId = FirebaseAuth.getInstance().currentUser!!.uid
+                        val databaseProduk = dbBarang.collection("Products").document(userId)
+
+                        databaseProduk.update("productList", FieldValue.arrayUnion(barangMap))
+                            .addOnSuccessListener {
+                                Toast.makeText(this, "Berhasil Memasukkan Data", Toast.LENGTH_SHORT).show()
+                                binding.inpNamaProduk.text.clear()
+                                binding.inpKategori.text.clear()
+                                binding.inpSatuan.text.clear()
+                                binding.inpStok.text.clear()
+                                binding.inpHarga.text.clear()
+                            }
+                            .addOnFailureListener {
+                                Toast.makeText(this, "Gagal Memasukkan Data", Toast.LENGTH_SHORT).show()
+                            }
+                    }
+                }
+                .addOnFailureListener { error ->
+                    Toast.makeText(this, error.message, Toast.LENGTH_SHORT).show()
+                }
+        } else {
+            Toast.makeText(this, "Gagal mengompres gambar", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    // Fungsi untuk mengompres gambar
+    private fun compressImage(uri: Uri): Uri? {
+        return try {
+            val originalBitmap = MediaStore.Images.Media.getBitmap(contentResolver, uri)
+            val outputStream = ByteArrayOutputStream()
+            originalBitmap.compress(Bitmap.CompressFormat.JPEG, 50, outputStream)
+            val compressedByteArray = outputStream.toByteArray()
+            val compressedBitmap = BitmapFactory.decodeByteArray(compressedByteArray, 0, compressedByteArray.size)
+
+            // Menyimpan gambar yang terkompres ke file temporer
+            val tempFile = createTempFile("tempImage", ".jpg")
+            val tempUri = Uri.fromFile(tempFile)
+            val tempOutputStream = FileOutputStream(tempFile)
+            compressedBitmap.compress(Bitmap.CompressFormat.JPEG, 50, tempOutputStream)
+            tempOutputStream.close()
+
+            tempUri
+        } catch (e: IOException) {
+            e.printStackTrace()
+            null
         }
     }
 }
