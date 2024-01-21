@@ -1,6 +1,7 @@
 package com.bornewtech.mitrapesaing.ui.barang
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
@@ -188,8 +189,11 @@ class InputBarang : AppCompatActivity() {
     private fun compressImage(uri: Uri): Uri? {
         return try {
             val originalBitmap = MediaStore.Images.Media.getBitmap(contentResolver, uri)
+            val rotation = getRotationFromGallery(uri) // Dapatkan rotasi gambar dari galeri
+            val orientedBitmap = rotateBitmap(originalBitmap, rotation)
+
             val outputStream = ByteArrayOutputStream()
-            originalBitmap.compress(Bitmap.CompressFormat.JPEG, 50, outputStream)
+            orientedBitmap.compress(Bitmap.CompressFormat.JPEG, 50, outputStream)
             val compressedByteArray = outputStream.toByteArray()
             val compressedBitmap = BitmapFactory.decodeByteArray(compressedByteArray, 0, compressedByteArray.size)
 
@@ -205,5 +209,28 @@ class InputBarang : AppCompatActivity() {
             e.printStackTrace()
             null
         }
+    }
+
+    // Fungsi untuk mendapatkan rotasi gambar dari galeri
+    @SuppressLint("Range")
+    private fun getRotationFromGallery(uri: Uri): Int {
+        val columns = arrayOf(MediaStore.Images.Media.ORIENTATION)
+        val cursor = contentResolver.query(uri, columns, null, null, null)
+        cursor?.use {
+            if (it.moveToFirst()) {
+                val orientation = it.getInt(it.getColumnIndex(columns[0]))
+                if (orientation != -1) {
+                    return orientation
+                }
+            }
+        }
+        return 0
+    }
+
+    // Fungsi untuk memutar bitmap sesuai dengan rotasi
+    private fun rotateBitmap(bitmap: Bitmap, rotation: Int): Bitmap {
+        val matrix = android.graphics.Matrix()
+        matrix.postRotate(rotation.toFloat())
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
     }
 }

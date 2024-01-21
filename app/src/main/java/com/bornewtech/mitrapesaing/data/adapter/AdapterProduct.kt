@@ -5,10 +5,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bornewtech.mitrapesaing.R
 import com.bornewtech.mitrapesaing.data.firestoreDb.ProductItem
+import com.bumptech.glide.Glide
 
 class AdapterProduct(
     private var productList: List<ProductItem>,
@@ -19,6 +21,7 @@ class AdapterProduct(
         val namaBarang: TextView = itemView.findViewById(R.id.namaBarang)
         val stokBarang: TextView = itemView.findViewById(R.id.stokBarang)
         val hargaBarang: TextView = itemView.findViewById(R.id.hargaBarang)
+        val gambarBarang: ImageView = itemView.findViewById(R.id.ivGambarRecViewBarang)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductViewHolder {
@@ -32,10 +35,6 @@ class AdapterProduct(
             }
         }
     }
-//    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductViewHolder {
-//        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.list_produk, parent, false)
-//        return ProductViewHolder(itemView)
-//    }
 
     override fun getItemCount(): Int {
         return productList.size
@@ -47,6 +46,11 @@ class AdapterProduct(
         holder.stokBarang.text = productItem.produkStok.toString()
         holder.hargaBarang.text = productItem.produkHarga.toString()
 
+        // Load image using Glide
+        Glide.with(holder.itemView.context)
+            .load(productItem.imageUrl)
+            .placeholder(R.drawable.image_baseline) // placeholder image
+            .into(holder.gambarBarang)
     }
 
     @SuppressLint("NotifyDataSetChanged")
