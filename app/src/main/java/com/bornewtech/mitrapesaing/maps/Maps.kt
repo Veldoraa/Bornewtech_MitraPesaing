@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.bornewtech.mitrapesaing.R
+import com.bornewtech.mitrapesaing.data.maps.DecodePolyline
 import com.bornewtech.mitrapesaing.databinding.ActivityMapsBinding
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -177,35 +178,33 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
 
                 if (titikTerdekat != null) {
                     addCustomMarker(LatLng(titikTerdekat.latitude, titikTerdekat.longitude), "Titik Terdekat")
-//                    if (titikTerdekat != null) {
-//                        val geoApiContext = GeoApiContext.Builder()
-//                            .api Key(apiKey)
-//                            .build()
-//
-//                        val request: DirectionsApiRequest = DirectionsApi.newRequest(geoApiContext)
-//                            .origin(currentLocation.latitude.toString() + "," + currentLocation.longitude)
-//                            .destination(titikTerdekat!!.latitude.toString() + "," + titikTerdekat!!.longitude)
-//                            .mode(TravelMode.DRIVING)
-//                            .units(Unit.METRIC)
-//
-//                        try {
-//                            val result: DirectionsResult = request.await()
-//
-//                            if (result.routes != null && result.routes.isNotEmpty()) {
-//                                val route: DirectionsRoute = result.routes[0]
-//                                val leg: DirectionsLeg = route.legs[0]
-//
-//                                val polylineOptions = PolylineOptions()
-//                                    .addAll(PolyUtil.decode(leg.overviewPolyline.encodedPath))
-//                                    .color(Color.BLUE)
-//                                    .width(5f)
-//
-//                                mMap.addPolyline(polylineOptions)
-//                            }
-//                        } catch (e: Exception) {
-//                            e.printStackTrace()
-//                        }
-//                    }
+                    val geoApiContext = GeoApiContext.Builder()
+                        .apiKey(apiKey)
+                        .build()
+
+                    val request: DirectionsApiRequest = DirectionsApi.newRequest(geoApiContext)
+                        .origin(currentLocation.latitude.toString() + "," + currentLocation.longitude)
+                        .destination(titikTerdekat!!.latitude.toString() + "," + titikTerdekat!!.longitude)
+                        .mode(TravelMode.DRIVING)
+                        .units(Unit.METRIC)
+
+                    try {
+                        val result: DirectionsResult = request.await()
+
+                        if (result.routes != null && result.routes.isNotEmpty()) {
+                            val route: DirectionsRoute = result.routes[0]
+                            val leg: DirectionsLeg = route.legs[0]
+
+                            val polylineOptions = PolylineOptions()
+                                .addAll(PolyUtil.decode(route.overviewPolyline.encodedPath))
+                                .color(Color.BLUE)
+                                .width(5f)
+
+                            mMap.addPolyline(polylineOptions)
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
                 }
 
 
@@ -220,13 +219,6 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
 //                        .strokeColor(Color.argb(128, 255, 0, 0)) // Warna garis lingkaran dengan transparansi
 //                        .fillColor(Color.argb(128, 255, 0, 0)) // Warna isi lingkaran dengan transparansi
 //                )
-
-                val latLngOrigin = currentLocation // Ayala
-                val latLngDestination = LatLng(titikTerdekat!!.latitude, titikTerdekat!!.longitude) // SM City
-                this.mMap!!.addMarker(MarkerOptions().position(latLngOrigin).title("Ayala"))
-                this.mMap!!.addMarker(MarkerOptions().position(latLngDestination).title("SM City"))
-                this.mMap!!.moveCamera(CameraUpdateFactory.newLatLngZoom(latLngOrigin, 14.5f))
-                val path: MutableList<List<LatLng>> = ArrayList()
 
 
                 val heatmapDataWithinRadius = heatmapData.filter { lokasi ->
