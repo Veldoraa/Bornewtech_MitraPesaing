@@ -10,12 +10,14 @@ import com.bornewtech.mitrapesaing.databinding.ActivityEditBarangBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 class EditBarang : AppCompatActivity() {
     private lateinit var binding: ActivityEditBarangBinding
     private var dbBarang = Firebase.firestore
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityEditBarangBinding.inflate(layoutInflater)
@@ -31,29 +33,52 @@ class EditBarang : AppCompatActivity() {
             val uStok = binding.updStokBarang.text.toString().trim()
             val uHarga = binding.updHargaBarang.text.toString().trim()
 
-            val updateBarang = hashMapOf(
-                "produkNama" to uNama,
-                "produkKategori" to uKategori,
-                "produkSatuan" to uSatuan,
-                "produkStok" to uStok,
-                "produkHarga" to uHarga
-            )
             val userId = FirebaseAuth.getInstance().currentUser!!.uid
-            val produkUpdate = dbBarang.collection("Products").document(userId)
-//            dbBarang.collection("Products").document(userId).update(updateBarang)
-            produkUpdate.update("productList", FieldValue.arrayUnion(updateBarang))
-                .addOnSuccessListener {
-                    Toast.makeText(this, "Berhasil memperbarui data", Toast.LENGTH_SHORT).show()
-                    binding.updNamaProduk.text.toString()
-                    binding.updKategori.text.toString()
-                    binding.updSatuan.text.toString()
-                    binding.updStokBarang.text.toString()
-                    binding.updHargaBarang.text.toString()
+            val referensi = dbBarang.collection("Products").document(userId)
+
+            // Dapatkan produkId dari Intent
+            val selectedItem = intent.getSerializableExtra("selectedItem") as? ProductItem
+            val produkId = selectedItem?.produkId
+
+            referensi.get()
+                .addOnSuccessListener { document ->
+                    if (document != null && document.exists()) {
+                        val array = document.get("productList") as ArrayList<HashMap<String, Any>>
+                        if (array.isNotEmpty()) {
+                            for (i in array.indices) {
+                                val produkMap = array[i]
+                                val existingProdukId = produkMap["produkId"] as String
+                                if (existingProdukId == produkId) {
+                                    // Update hanya field-field tertentu
+                                    array[i] = hashMapOf(
+                                        "produkId" to existingProdukId,
+                                        "produkNama" to uNama,
+                                        "produkKategori" to uKategori,
+                                        "produkSatuan" to uSatuan,
+                                        "produkStok" to uStok,
+                                        "produkHarga" to uHarga,
+                                        "imageUrl" to produkMap["imageUrl"] as String // Cast imageUrl to String
+                                    )
+                                    break // Keluar dari loop setelah menemukan produk yang sesuai
+                                }
+                            }
+
+                            // Update ke Firestore
+                            referensi.update("productList", array)
+                                .addOnSuccessListener {
+                                    Toast.makeText(this, "Berhasil memperbarui data", Toast.LENGTH_SHORT).show()
+                                    finish() // Selesaikan aktivitas setelah update berhasil
+                                }
+                                .addOnFailureListener {
+                                    Toast.makeText(this, "Gagal memperbarui data", Toast.LENGTH_SHORT).show()
+                                }
+
+                        }
+                    }
                 }
                 .addOnFailureListener {
-                    Toast.makeText(this, "Gagal memperbarui data", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Gagal mengambil data", Toast.LENGTH_SHORT).show()
                 }
-//            Toast.makeText(this, "Sukses mengupdate barang", Toast.LENGTH_SHORT).show()
         }
     }
 
