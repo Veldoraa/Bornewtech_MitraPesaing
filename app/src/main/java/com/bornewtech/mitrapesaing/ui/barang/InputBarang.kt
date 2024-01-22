@@ -47,6 +47,7 @@ class InputBarang : AppCompatActivity() {
     private var currentImageUri: Uri? = null
     private var dbBarang = Firebase.firestore
     private var storageRef = Firebase.storage
+    private var pedagangId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,6 +60,8 @@ class InputBarang : AppCompatActivity() {
         binding.btnGallery.setOnClickListener { startGallery() }
         binding.btnCamera.setOnClickListener { startCamera() }
 
+        // Mendapatkan ID pengguna yang sedang login
+        pedagangId = FirebaseAuth.getInstance().currentUser?.uid
 
         binding.btnTambahBarang.setOnClickListener { saveData() }
     }
@@ -111,6 +114,7 @@ class InputBarang : AppCompatActivity() {
     }
 
     //save data
+    //save data
     private fun saveData() {
         val nama = binding.inpNamaProduk.text.toString().trim()
         val kategori = binding.inpKategori.text.toString().trim()
@@ -118,13 +122,10 @@ class InputBarang : AppCompatActivity() {
         val stok = binding.inpStok.text.toString().trim()
         val harga = binding.inpHarga.text.toString().trim()
 
-        // Mendapatkan ID pengguna yang sedang login
-        val pedagangId = FirebaseAuth.getInstance().currentUser?.uid
-
+        // Check if user is logged in
         if (pedagangId != null) {
-            // Continue with image upload
             currentImageUri?.let { uri ->
-                uploadImage(uri, pedagangId, nama, kategori, satuan, stok, harga)
+                uploadImage(uri, pedagangId!!, nama, kategori, satuan, stok, harga)
             } ?: run {
                 Toast.makeText(this, "Image URI is null", Toast.LENGTH_SHORT).show()
             }
@@ -160,8 +161,7 @@ class InputBarang : AppCompatActivity() {
                         )
 
                         // Nambah Barang
-                        val userId = FirebaseAuth.getInstance().currentUser!!.uid
-                        val databaseProduk = dbBarang.collection("Products").document(userId)
+                        val databaseProduk = dbBarang.collection("Products").document(pedagangId)
 
                         databaseProduk.update("productList", FieldValue.arrayUnion(barangMap))
                             .addOnSuccessListener {
