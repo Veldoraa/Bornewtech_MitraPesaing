@@ -167,7 +167,7 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
 
 
                 val titikClusterFiltered = heatmapData.filter { Lokasi ->
-                    Lokasi.cluster > 5
+                    Lokasi.weight > 1
                 }
 
                 titikClusterTinggi = titikClusterFiltered as ArrayList<Lokasi>
@@ -271,7 +271,7 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
         return true
     }
 
-    data class Lokasi(val latitude: Double, val longitude: Double, val cluster: Double)
+    data class Lokasi(val latitude: Double, val longitude: Double, val weight: Double)
 
     fun hitungJarak(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
         val radiusBumi = 6371 // Radius Bumi dalam kilometer
@@ -284,28 +284,6 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
         val c = 2 * atan2(sqrt(a), sqrt(1 - a))
 
         return radiusBumi * c // Jarak dalam kilometer
-    }
-
-
-    private fun showHeatmap(data: ArrayList<Lokasi>) {
-        mMap.clear()
-
-        val data = titikClusterTinggi
-
-        if (data.isNotEmpty()) {
-            val heatmapProvider = HeatmapTileProvider.Builder()
-                .weightedData(data.map { WeightedLatLng(LatLng(it.latitude, it.longitude), it.cluster) })
-                .radius(20)
-                .maxIntensity(10.0)
-                .build()
-
-            mMap.addTileOverlay(TileOverlayOptions().tileProvider(heatmapProvider))
-        } else {
-            // Lakukan sesuatu jika heatmapDataWithinRadius kosong, seperti menampilkan pesan
-            Log.d("Heatmap", "No input points available for heatmap within radius")
-            Toast.makeText(this@Maps, "No input points available for heatmap within radius", Toast.LENGTH_SHORT).show()
-            // ... Lakukan tindakan lainnya jika diperlukan
-        }
     }
 
     private fun addHeatmap(waktu: Long) {
@@ -324,8 +302,9 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
                     val cluster = snapshot.child("cluster").getValue(Int::class.java) ?: 0
                     val latitude = snapshot.child("lat").getValue(Double::class.java) ?: 0.0
                     val longitude = snapshot.child("lng").getValue(Double::class.java) ?: 0.0
+                    val weight = snapshot.child("weight").getValue(Double::class.java) ?: 0.0
 
-                    heatmapData.add(Lokasi(latitude, longitude, cluster.toDouble()))
+                    heatmapData.add(Lokasi(latitude, longitude, weight))
                 }
 
                 this@Maps.heatmapData = heatmapData
@@ -334,7 +313,7 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
                 // Filter titik-titik dengan nilai cluster lebih tinggi dari 5
                 if (heatmapData.isNotEmpty()) {
                     val heatmapProvider = HeatmapTileProvider.Builder()
-                        .weightedData(heatmapData.map { WeightedLatLng(LatLng(it.latitude, it.longitude), it.cluster) })
+                        .weightedData(heatmapData.map { WeightedLatLng(LatLng(it.latitude, it.longitude), it.weight) })
                         .radius(20)
                         .maxIntensity(10.0)
                         .build()
