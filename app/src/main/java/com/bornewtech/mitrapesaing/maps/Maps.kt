@@ -167,7 +167,7 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
 
 
                 val titikClusterFiltered = heatmapData.filter { Lokasi ->
-                    Lokasi.weight > 1
+                    Lokasi.weight > 10
                 }
 
                 titikClusterTinggi = titikClusterFiltered as ArrayList<Lokasi>
@@ -184,7 +184,7 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
 
                     val request: DirectionsApiRequest = DirectionsApi.newRequest(geoApiContext)
                         .origin(currentLocation.latitude.toString() + "," + currentLocation.longitude)
-                        .destination(titikTerdekat!!.latitude.toString() + "," + titikTerdekat!!.longitude)
+                        .destination(titikTerdekat.latitude.toString() + "," + titikTerdekat.longitude)
                         .mode(TravelMode.DRIVING)
                         .units(Unit.METRIC)
 
