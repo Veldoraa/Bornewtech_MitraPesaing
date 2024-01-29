@@ -136,7 +136,8 @@ class InputBarang : AppCompatActivity() {
     }
 
     private fun uploadImage(uri: Uri, pedagangId: String, nama: String, kategori: String, satuan: String, stok: String, harga: String) {
-        val storageReference = storageRef.getReference("Gambar Barang")
+        // Membuat referensi storage dengan UID pedagang sebagai direktori utama
+        val storageReference = storageRef.getReference("GambarBarang/$pedagangId")
             .child(System.currentTimeMillis().toString())
 
         // Kompresi gambar sebelum mengunggah

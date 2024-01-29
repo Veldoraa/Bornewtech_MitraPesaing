@@ -1,7 +1,11 @@
 package com.bornewtech.mitrapesaing.maps
 
+import android.content.ActivityNotFoundException
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.location.Location
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -15,7 +19,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.bornewtech.mitrapesaing.R
-import com.bornewtech.mitrapesaing.data.maps.DecodePolyline
 import com.bornewtech.mitrapesaing.databinding.ActivityMapsBinding
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -54,6 +57,7 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var mMap: GoogleMap
     private lateinit var binding: ActivityMapsBinding
     private lateinit var myButton: Button
+    private lateinit var myToGoogleMaps: Button
     private var heatmapData: ArrayList<Lokasi> = ArrayList()
     private var titikClusterTinggi: ArrayList<Lokasi> = ArrayList()
     private var radiusCircle: Circle? = null
@@ -66,6 +70,7 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
         super.onCreate(savedInstanceState)
         binding = ActivityMapsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        supportActionBar?.hide()
 
         // Inisialisasi Firebase
         FirebaseApp.initializeApp(this)
@@ -76,8 +81,22 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
         myButton = findViewById(R.id.myButton)
         myButton.setOnClickListener {
             goToCurrentLocation()
-
         }
+
+        myToGoogleMaps = findViewById(R.id.myToGoogleMaps)
+        myToGoogleMaps.setOnClickListener {
+            val currentLocation = mMap.myLocation
+            val titikTerdekat = titikClusterTinggi.minByOrNull {
+                hitungJarak(currentLocation?.latitude ?: 0.0, currentLocation?.longitude ?: 0.0, it.latitude, it.longitude)
+            }
+
+            if (titikTerdekat != null) {
+                openGoogleMaps(currentLocation, titikTerdekat)
+            } else {
+                Toast.makeText(this@Maps, "No nearest point found", Toast.LENGTH_SHORT).show()
+            }
+        }
+
 
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
@@ -232,6 +251,19 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
             }
         } else {
             Toast.makeText(this, "Location permission denied", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun openGoogleMaps(startLocation: Location?, destination: Lokasi) {
+        val uri = "https://www.google.com/maps/dir/?api=1&origin=${startLocation?.latitude},${startLocation?.longitude}" +
+                "&destination=${destination.latitude},${destination.longitude}&travelmode=driving"
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
+        intent.setPackage("com.google.android.apps.maps")
+
+        try {
+            startActivity(intent)
+        } catch (e: ActivityNotFoundException) {
+            Toast.makeText(this, "Google Maps app not installed", Toast.LENGTH_SHORT).show()
         }
     }
 
