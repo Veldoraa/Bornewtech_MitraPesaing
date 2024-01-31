@@ -1,5 +1,6 @@
 package com.bornewtech.mitrapesaing.maps
 
+import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -15,6 +16,7 @@ import android.widget.ArrayAdapter
 import android.widget.AdapterView
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -57,14 +59,11 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var mMap: GoogleMap
     private lateinit var binding: ActivityMapsBinding
     private lateinit var myButton: Button
-    private lateinit var myToGoogleMaps: Button
+//    private lateinit var myToGoogleMaps: Button
     private var heatmapData: ArrayList<Lokasi> = ArrayList()
     private var titikClusterTinggi: ArrayList<Lokasi> = ArrayList()
-    private var radiusCircle: Circle? = null
+//    private var radiusCircle: Circle? = null
     private lateinit var apiKey: String // Variabel untuk menyimpan kunci API
-//    private var currentLocation: LatLng? = null
-//    private lateinit var radioGroup: RadioGroup
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -83,19 +82,19 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
             goToCurrentLocation()
         }
 
-        myToGoogleMaps = findViewById(R.id.myToGoogleMaps)
-        myToGoogleMaps.setOnClickListener {
-            val currentLocation = mMap.myLocation
-            val titikTerdekat = titikClusterTinggi.minByOrNull {
-                hitungJarak(currentLocation?.latitude ?: 0.0, currentLocation?.longitude ?: 0.0, it.latitude, it.longitude)
-            }
-
-            if (titikTerdekat != null) {
-                openGoogleMaps(currentLocation, titikTerdekat)
-            } else {
-                Toast.makeText(this@Maps, "No nearest point found", Toast.LENGTH_SHORT).show()
-            }
-        }
+//        myToGoogleMaps = findViewById(R.id.myToGoogleMaps)
+//        myToGoogleMaps.setOnClickListener {
+//            val currentLocation = mMap.myLocation
+//            val titikTerdekat = titikClusterTinggi.minByOrNull {
+//                hitungJarak(currentLocation?.latitude ?: 0.0, currentLocation?.longitude ?: 0.0, it.latitude, it.longitude)
+//            }
+//
+//            if (titikTerdekat != null) {
+//                openGoogleMaps(currentLocation, titikTerdekat)
+//            } else {
+//                Toast.makeText(this@Maps, "No nearest point found", Toast.LENGTH_SHORT).show()
+//            }
+//        }
 
 
         val mapFragment = supportFragmentManager
@@ -173,6 +172,7 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
+    @SuppressLint("PotentialBehaviorOverride")
     private fun goToCurrentLocation() {
         if (ContextCompat.checkSelfPermission(
                 this,
@@ -180,10 +180,9 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
             ) == PackageManager.PERMISSION_GRANTED
         ) {
             mMap.isMyLocationEnabled = true
-            mMap.setOnMyLocationChangeListener {
-                val currentLocation = LatLng(it.latitude, it.longitude)
+            mMap.setOnMyLocationChangeListener { location ->
+                val currentLocation = LatLng(location.latitude, location.longitude)
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15f))
-
 
                 val titikClusterFiltered = heatmapData.filter { Lokasi ->
                     Lokasi.weight > 10
@@ -192,71 +191,120 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
                 titikClusterTinggi = titikClusterFiltered as ArrayList<Lokasi>
 
                 val titikTerdekat = titikClusterTinggi.minByOrNull {
-                    hitungJarak(currentLocation.latitude,currentLocation.longitude, it.latitude, it.longitude)
+                    hitungJarak(
+                        currentLocation.latitude,
+                        currentLocation.longitude,
+                        it.latitude,
+                        it.longitude
+                    )
                 }
 
                 if (titikTerdekat != null) {
-                    addCustomMarker(LatLng(titikTerdekat.latitude, titikTerdekat.longitude), "Titik Terdekat")
-                    val geoApiContext = GeoApiContext.Builder()
-                        .apiKey(apiKey)
-                        .build()
+                    // Hapus semua marker sebelum menambahkan yang baru
+                    mMap.clear()
 
-                    val request: DirectionsApiRequest = DirectionsApi.newRequest(geoApiContext)
-                        .origin(currentLocation.latitude.toString() + "," + currentLocation.longitude)
-                        .destination(titikTerdekat.latitude.toString() + "," + titikTerdekat.longitude)
-                        .mode(TravelMode.DRIVING)
-                        .units(Unit.METRIC)
+                    // Tambahkan marker untuk titik terdekat
+                    addCustomMarker(
+                        LatLng(titikTerdekat.latitude, titikTerdekat.longitude),
+                        "Titik Terdekat"
+                    )
 
-                    try {
-                        val result: DirectionsResult = request.await()
+                    // Get the 3 nearest points within a 500-meter radius
+                    val nearestPoints = titikClusterTinggi.filter {
+                        hitungJarak(
+                            currentLocation.latitude,
+                            currentLocation.longitude,
+                            it.latitude,
+                            it.longitude
+                        ) <= 500.0
+                    }.sortedBy {
+                        hitungJarak(
+                            currentLocation.latitude,
+                            currentLocation.longitude,
+                            it.latitude,
+                            it.longitude
+                        )
+                    }.take(3)
 
-                        if (result.routes != null && result.routes.isNotEmpty()) {
-                            val route: DirectionsRoute = result.routes[0]
-                            val leg: DirectionsLeg = route.legs[0]
+                    // Add markers for the 3 nearest points
+                    addMarkersForNearestPoints(currentLocation, nearestPoints)
 
-                            val polylineOptions = PolylineOptions()
-                                .addAll(PolyUtil.decode(route.overviewPolyline.encodedPath))
-                                .color(Color.BLUE)
-                                .width(5f)
-
-                            mMap.addPolyline(polylineOptions)
+                    // Set marker click listener
+                    mMap.setOnMarkerClickListener { marker ->
+                        val selectedLocation = heatmapData.find {
+                            it.latitude == marker.position.latitude && it.longitude == marker.position.longitude
                         }
-                    } catch (e: Exception) {
-                        e.printStackTrace()
+                        showSelectedMarkerInfo(selectedLocation)
+                        true
                     }
+
+                    // Add heatmap after adding markers
+                    addHeatmapOverlay()
                 }
 
-
-                // Hapus lingkaran sebelum menambahkan yang baru
-//                radiusCircle?.remove()
-
-                // Tambahkan lingkaran (radius) di sekitar lokasi saat ini
-//                radiusCircle = mMap.addCircle(
-//                    CircleOptions()
-//                        .center(currentLocation)
-//                        .radius(1000.0) // Ganti dengan radius yang diinginkan dalam meter
-//                        .strokeColor(Color.argb(128, 255, 0, 0)) // Warna garis lingkaran dengan transparansi
-//                        .fillColor(Color.argb(128, 255, 0, 0)) // Warna isi lingkaran dengan transparansi
-//                )
-
-
-                val heatmapDataWithinRadius = heatmapData.filter { lokasi ->
-                    hitungJarak(currentLocation.latitude, currentLocation.longitude, lokasi.latitude, lokasi.longitude) <= 100.0
-                } as ArrayList<Lokasi>
-                // Tampilkan heatmap hanya untuk data yang berada dalam radius lingkaran
-//                showHeatmap(heatmapDataWithinRadius)
-
-                Toast.makeText(this@Maps, "Titik Terdekat Adalah ${titikTerdekat?.latitude}, " +
-                        "${titikTerdekat?.longitude}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this@Maps,
+                    "Titik Terdekat Adalah ${titikTerdekat?.latitude}, " +
+                            "${titikTerdekat?.longitude}",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         } else {
             Toast.makeText(this, "Location permission denied", Toast.LENGTH_SHORT).show()
         }
     }
 
-    private fun openGoogleMaps(startLocation: Location?, destination: Lokasi) {
-        val uri = "https://www.google.com/maps/dir/?api=1&origin=${startLocation?.latitude},${startLocation?.longitude}" +
-                "&destination=${destination.latitude},${destination.longitude}&travelmode=driving"
+    private fun addHeatmapOverlay() {
+        // Add heatmap after adding markers
+        if (heatmapData.isNotEmpty()) {
+            val heatmapProvider = HeatmapTileProvider.Builder()
+                .weightedData(heatmapData.map { WeightedLatLng(LatLng(it.latitude, it.longitude), it.weight) })
+                .radius(20)
+                .maxIntensity(10.0)
+                .build()
+
+            mMap.addTileOverlay(TileOverlayOptions().tileProvider(heatmapProvider))
+        } else {
+            // Lakukan sesuatu jika heatmapData kosong, seperti menampilkan pesan
+            Log.d("Heatmap", "No input points available for heatmap")
+            Toast.makeText(this@Maps, "No input points available for heatmap", Toast.LENGTH_SHORT).show()
+            // ... Lakukan tindakan lainnya jika diperlukan
+        }
+    }
+
+    private fun addMarkersForNearestPoints(
+        currentLocation: LatLng,
+        nearestPoints: List<Lokasi>
+    ) {
+        for ((index, nearestPoint) in nearestPoints.withIndex()) {
+            val markerOptions = MarkerOptions()
+                .position(LatLng(nearestPoint.latitude, nearestPoint.longitude))
+                .title("Titik Terdekat ${index + 1}")
+            mMap.addMarker(markerOptions)
+        }
+    }
+
+    private fun showSelectedMarkerInfo(selectedLocation: Lokasi?) {
+        // Handle the click event for the selected marker, e.g., show details
+        if (selectedLocation != null) {
+            val alertDialogBuilder = AlertDialog.Builder(this)
+            alertDialogBuilder.setTitle("Lokasi Yang Anda Pilih")
+            alertDialogBuilder.setMessage("Latitude: ${selectedLocation.latitude}, Longitude: ${selectedLocation.longitude}")
+            alertDialogBuilder.setPositiveButton("Menuju Rute") { _, _ ->
+                // Open Google Maps for navigation
+                navigateToSelectedLocation(selectedLocation)
+            }
+            alertDialogBuilder.setNegativeButton("Batal") { dialog, _ ->
+                dialog.dismiss()
+            }
+            alertDialogBuilder.create().show()
+        }
+    }
+
+    private fun navigateToSelectedLocation(location: Lokasi) {
+        val currentLocation = mMap.myLocation
+        val uri = "https://www.google.com/maps/dir/?api=1&origin=${currentLocation?.latitude},${currentLocation?.longitude}" +
+                "&destination=${location.latitude},${location.longitude}&travelmode=driving"
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
         intent.setPackage("com.google.android.apps.maps")
 
@@ -266,6 +314,19 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
             Toast.makeText(this, "Google Maps app not installed", Toast.LENGTH_SHORT).show()
         }
     }
+
+//    private fun openGoogleMaps(startLocation: Location?, destination: Lokasi) {
+//        val uri = "https://www.google.com/maps/dir/?api=1&origin=${startLocation?.latitude},${startLocation?.longitude}" +
+//                "&destination=${destination.latitude},${destination.longitude}&travelmode=driving"
+//        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
+//        intent.setPackage("com.google.android.apps.maps")
+//
+//        try {
+//            startActivity(intent)
+//        } catch (e: ActivityNotFoundException) {
+//            Toast.makeText(this, "Google Maps app not installed", Toast.LENGTH_SHORT).show()
+//        }
+//    }
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -290,12 +351,20 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
         val minZoomLevel = 13.0f
-//        mMap.setMinZoomPreference(minZoomLevel)
-        // Add a marker in Sydney and move the camera
+        // mMap.setMinZoomPreference(minZoomLevel)
+        // Add a marker in Pontianak and move the camera
         val pontianak = LatLng(-0.02800127398174045, 109.34220099978418)
-        mMap.addMarker(MarkerOptions().position(pontianak).title("Marker di Pontianak"))
+        mMap.addMarker(MarkerOptions().position(pontianak).title("Marker in Pontianak"))
         mMap.moveCamera(CameraUpdateFactory.newLatLng(pontianak))
 
+        // Set marker click listener
+        mMap.setOnMarkerClickListener { marker ->
+            val selectedLocation = heatmapData.find {
+                it.latitude == marker.position.latitude && it.longitude == marker.position.longitude
+            }
+            showSelectedMarkerInfo(selectedLocation)
+            true
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

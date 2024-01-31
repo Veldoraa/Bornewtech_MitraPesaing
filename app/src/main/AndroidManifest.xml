@@ -22,6 +22,9 @@
         android:theme="@style/Theme.MitraPesaing"
         tools:targetApi="31">
         <activity
+            android:name=".ui.order.Pesanan"
+            android:exported="false" />
+        <activity
             android:name=".ui.barang.recyclerview.RecViewBarang"
             android:exported="false" />
         <activity
@@ -87,20 +90,21 @@
         </activity>
         <activity
             android:name=".main.MainActivity"
-            android:exported="false" />
-
-        <!-- Trigger Google Play services to install the backported photo picker module. -->
-        <!--suppress AndroidDomInspection -->
-        <service android:name="com.google.android.gms.metadata.ModuleDependencies"
+            android:exported="false" /> <!-- Trigger Google Play services to install the backported photo picker module. -->
+        <!-- suppress AndroidDomInspection -->
+        <service
+            android:name="com.google.android.gms.metadata.ModuleDependencies"
             android:enabled="false"
             android:exported="false"
             tools:ignore="MissingClass">
             <intent-filter>
                 <action android:name="com.google.android.gms.metadata.MODULE_DEPENDENCIES" />
             </intent-filter>
-            <meta-data android:name="photopicker_activity:0:required" android:value="" />
-        </service>
-        <!-- Provider -->
+
+            <meta-data
+                android:name="photopicker_activity:0:required"
+                android:value="" />
+        </service> <!-- Provider -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"

@@ -9,6 +9,7 @@ import com.bornewtech.mitrapesaing.maps.Maps
 import com.bornewtech.mitrapesaing.ui.barang.DetailBarang
 import com.bornewtech.mitrapesaing.ui.barang.recyclerview.RecViewBarang
 import com.bornewtech.mitrapesaing.ui.fragment.home.HomeFragment
+import com.bornewtech.mitrapesaing.ui.order.Pesanan
 import com.bornewtech.mitrapesaing.ui.profile.Profil
 
 class MainActivity : AppCompatActivity() {
@@ -39,7 +40,8 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 R.id.pesanan_pedagang -> {
-
+                    val intent = Intent(this, Pesanan::class.java)
+                    startActivity(intent)
                 }
 
                 R.id.akun_pedagang -> {
