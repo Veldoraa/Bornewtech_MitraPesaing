@@ -68,11 +68,11 @@
             app:layout_constraintTop_toBottomOf="@+id/statusTransaksi" />
 
         <TextView
-            android:id="@+id/pedagangId"
+            android:id="@+id/namaPembeli"
             android:layout_width="180dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:text="Pedagang ID"
+            android:text="Nama Pembeli"
             app:layout_constraintStart_toEndOf="@+id/imageCartProduct"
             app:layout_constraintTop_toBottomOf="@+id/jumlahBarangPerTransaksi" />
 
@@ -83,7 +83,7 @@
             android:layout_marginStart="8dp"
             android:text="pembeli ID"
             app:layout_constraintStart_toEndOf="@+id/imageCartProduct"
-            app:layout_constraintTop_toBottomOf="@+id/pedagangId" />
+            app:layout_constraintTop_toBottomOf="@+id/namaPembeli" />
 
         <TextView
             android:id="@+id/latlng"

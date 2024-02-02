@@ -127,19 +127,19 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
                 when (selectedItem) {
                     "3 Hari" -> {
                         addHeatmap(threeDaysAgo)
-                        Toast.makeText(applicationContext, "Option 1 dipilih", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(applicationContext, "Kategori 1 dipilih", Toast.LENGTH_SHORT).show()
                     }
                     "7 Hari" -> {
                         addHeatmap(sevenDaysAgo)
-                        Toast.makeText(applicationContext, "Option 2 dipilih", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(applicationContext, "Kategori 2 dipilih", Toast.LENGTH_SHORT).show()
                     }
                     "30 Hari" -> {
                         addHeatmap(thirtyDaysAgo)
-                        Toast.makeText(applicationContext, "Option 3 dipilih", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(applicationContext, "Kategori 3 dipilih", Toast.LENGTH_SHORT).show()
                     }
                     "Semua Data" -> {
                         addHeatmap(alldata)
-                        Toast.makeText(applicationContext, "Option 4 dipilih", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(applicationContext, "Kategori 4 dipilih", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
@@ -184,49 +184,52 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
                 val currentLocation = LatLng(location.latitude, location.longitude)
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15f))
 
-                val titikClusterFiltered = heatmapData.filter { Lokasi ->
-                    Lokasi.weight > 10
+                val titikClusterFiltered = heatmapData.filter { lokasi ->
+                    lokasi.weight > 5
                 }
 
                 titikClusterTinggi = titikClusterFiltered as ArrayList<Lokasi>
 
-                val titikTerdekat = titikClusterTinggi.minByOrNull {
+                // Filter out points outside the 300-meter radius
+                val titikDalamRadius = titikClusterTinggi.filter {
                     hitungJarak(
                         currentLocation.latitude,
                         currentLocation.longitude,
                         it.latitude,
                         it.longitude
-                    )
+                    ) <= 0.5 // 0.5 km = 500 meter
                 }
 
-                if (titikTerdekat != null) {
-                    // Hapus semua marker sebelum menambahkan yang baru
-                    mMap.clear()
+                // Hapus semua marker sebelum menambahkan yang baru
+                clearAllMarkers()
 
-                    // Tambahkan marker untuk titik terdekat
-                    addCustomMarker(
-                        LatLng(titikTerdekat.latitude, titikTerdekat.longitude),
-                        "Titik Terdekat"
-                    )
-
-                    // Get the 3 nearest points within a 500-meter radius
-                    val nearestPoints = titikClusterTinggi.filter {
-                        hitungJarak(
-                            currentLocation.latitude,
-                            currentLocation.longitude,
-                            it.latitude,
-                            it.longitude
-                        ) <= 500.0
-                    }.sortedBy {
+                if (titikDalamRadius.isNotEmpty()) {
+                    val titikTerdekat = titikDalamRadius.minByOrNull {
                         hitungJarak(
                             currentLocation.latitude,
                             currentLocation.longitude,
                             it.latitude,
                             it.longitude
                         )
-                    }.take(3)
+                    }
 
-                    // Add markers for the 3 nearest points
+                    // Tambahkan marker untuk titik terdekat
+                    addCustomMarker(
+                        LatLng(titikTerdekat!!.latitude, titikTerdekat.longitude),
+                        "Titik Terdekat"
+                    )
+
+                    // Get the 5 nearest points within a 500-meter radius
+                    val nearestPoints = titikDalamRadius.sortedBy {
+                        hitungJarak(
+                            currentLocation.latitude,
+                            currentLocation.longitude,
+                            it.latitude,
+                            it.longitude
+                        )
+                    }.take(5)
+
+                    // Add markers for the 5 nearest points
                     addMarkersForNearestPoints(currentLocation, nearestPoints)
 
                     // Set marker click listener
@@ -240,19 +243,28 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
 
                     // Add heatmap after adding markers
                     addHeatmapOverlay()
+                } else {
+                    Toast.makeText(
+                        this@Maps,
+                        "Tidak ada titik dalam radius 500 meter",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
-
-                Toast.makeText(
-                    this@Maps,
-                    "Titik Terdekat Adalah ${titikTerdekat?.latitude}, " +
-                            "${titikTerdekat?.longitude}",
-                    Toast.LENGTH_SHORT
-                ).show()
             }
         } else {
-            Toast.makeText(this, "Location permission denied", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Izin Lokasi Di Tolak", Toast.LENGTH_SHORT).show()
         }
     }
+
+    private fun clearAllMarkers() {
+        // Hapus semua marker pada peta
+        mMap.clear()
+        // Tambahkan kembali heatmap setelah menghapus marker
+        addHeatmapOverlay()
+    }
+
+
+
 
     private fun addHeatmapOverlay() {
         // Add heatmap after adding markers
@@ -267,7 +279,7 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
         } else {
             // Lakukan sesuatu jika heatmapData kosong, seperti menampilkan pesan
             Log.d("Heatmap", "No input points available for heatmap")
-            Toast.makeText(this@Maps, "No input points available for heatmap", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@Maps, "Titik Point Peta Panas Tidak termuat di Kategori Ini", Toast.LENGTH_SHORT).show()
             // ... Lakukan tindakan lainnya jika diperlukan
         }
     }
@@ -338,7 +350,7 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 enableMyLocation()
             } else {
-                Toast.makeText(this, "Location permission denied", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Izin Lokasi Di Tolak", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -356,6 +368,7 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
         val pontianak = LatLng(-0.02800127398174045, 109.34220099978418)
         mMap.addMarker(MarkerOptions().position(pontianak).title("Marker in Pontianak"))
         mMap.moveCamera(CameraUpdateFactory.newLatLng(pontianak))
+        mMap.setMinZoomPreference(minZoomLevel)
 
         // Set marker click listener
         mMap.setOnMarkerClickListener { marker ->

@@ -8,15 +8,12 @@ import com.bornewtech.mitrapesaing.data.firestoreDb.ProductItem
 import com.bornewtech.mitrapesaing.data.firestoreDb.Products
 import com.bornewtech.mitrapesaing.databinding.ActivityEditBarangBinding
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FieldValue
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 class EditBarang : AppCompatActivity() {
     private lateinit var binding: ActivityEditBarangBinding
-    private var dbBarang = Firebase.firestore
+    private val dbBarang = Firebase.firestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,17 +46,18 @@ class EditBarang : AppCompatActivity() {
                                 val produkMap = array[i]
                                 val existingProdukId = produkMap["produkId"] as String
                                 if (existingProdukId == produkId) {
-                                    // Update hanya field-field tertentu
+                                    // Retain the pedagangId during the update
                                     array[i] = hashMapOf(
                                         "produkId" to existingProdukId,
+                                        "pedagangId" to produkMap["pedagangId"] as String,
                                         "produkNama" to uNama,
                                         "produkKategori" to uKategori,
                                         "produkSatuan" to uSatuan,
                                         "produkStok" to uStok,
                                         "produkHarga" to uHarga,
-                                        "imageUrl" to produkMap["imageUrl"] as String // Cast imageUrl to String
+                                        "imageUrl" to produkMap["imageUrl"] as String
                                     )
-                                    break // Keluar dari loop setelah menemukan produk yang sesuai
+                                    break
                                 }
                             }
 
@@ -82,7 +80,7 @@ class EditBarang : AppCompatActivity() {
         }
     }
 
-    private fun setData(){
+    private fun setData() {
         val userId = FirebaseAuth.getInstance().currentUser!!.uid
         val referensi = dbBarang.collection("Products").document(userId)
         referensi.get()

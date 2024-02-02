@@ -5,12 +5,12 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bornewtech.mitrapesaing.data.firestoreDb.CartItem
 import com.bornewtech.mitrapesaing.data.firestoreDb.Transaction
-import com.bornewtech.mitrapesaing.databinding.ListTransaksiBinding
+import com.bornewtech.mitrapesaing.databinding.ListPesananBinding
 
 class AdapterPesanan(private var transactions: List<Transaction>) :
     RecyclerView.Adapter<AdapterPesanan.ViewHolder>() {
 
-    class ViewHolder(private val binding: ListTransaksiBinding) : RecyclerView.ViewHolder(binding.root) {
+    class ViewHolder(private val binding: ListPesananBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(transaction: Transaction) {
             binding.namaBarangTransaksi.text = "Transaction ID: ${transaction.idTransaksi}"
             binding.statusTransaksi.text = "Total Harga: Rp ${transaction.jumlahHarga},00"
@@ -25,7 +25,7 @@ class AdapterPesanan(private var transactions: List<Transaction>) :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = ListTransaksiBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ListPesananBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
     }
 

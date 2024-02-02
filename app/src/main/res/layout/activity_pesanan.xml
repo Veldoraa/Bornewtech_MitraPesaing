@@ -36,7 +36,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="25dp"
                     android:fontFamily="@font/roboto_bold"
-                    android:text="Pembayaran"
+                    android:text="Pesanan"
                     android:textColor="@color/black"
                     android:textSize="20sp"
                     app:layout_constraintBottom_toBottomOf="@id/imageCloseBilling"
@@ -147,7 +147,7 @@
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="@id/leftGuideline"
             app:layout_constraintTop_toBottomOf="@id/middleLine"
-            tools:listitem="@layout/list_transaksi"
+            tools:listitem="@layout/list_pesanan"
             android:orientation="vertical"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
 
