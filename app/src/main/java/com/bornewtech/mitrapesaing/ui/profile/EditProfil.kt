@@ -29,11 +29,9 @@ import java.util.Locale
 
 class EditProfil : AppCompatActivity() {
     private lateinit var binding: ActivityEditProfilBinding
-    private var dbProfil  = Firebase.firestore
+    private var dbProfil = Firebase.firestore
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationRequest: LocationRequest
-    private var storageRef = Firebase.storage
-    private var currentImageUri: Uri? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,11 +51,12 @@ class EditProfil : AppCompatActivity() {
             checkLocationPermission()
         }
         setData()
-//        binding.addImgProfil.setOnClickListener { startCamera() }
 
         binding.btnSimpanProfil.setOnClickListener {
+            // Pastikan di sini URL gambar diambil terlebih dahulu sebelum menyimpan data profil
+            getImageUrlFromStorage()
 
-            requestLocationUpdates()
+            // Simpan data profil seperti yang Anda lakukan sebelumnya
             val nameProfil = binding.inpNamaProfil.text.toString().trim()
             val noHpProfil = binding.inpNoHpProfil.text.toString().trim()
             val emailProfil = binding.inpEmailProfil.text.toString().trim()
@@ -69,73 +68,29 @@ class EditProfil : AppCompatActivity() {
                 "email" to emailProfil,
                 "alamatLengkap" to alamatProfil
             )
+
             val userId = FirebaseAuth.getInstance().currentUser!!.uid
             dbProfil.collection("Pedagang").document(userId).set(profilMap)
                 .addOnSuccessListener {
                     Toast.makeText(this, "Berhasil Memasukkan Data Profil", Toast.LENGTH_SHORT).show()
-                    binding.inpNamaProfil.text
-                    binding.inpNoHpProfil.text
-                    binding.inpAlamatProfil.text
-                    binding.inpAlamatProfil.text
                 }
                 .addOnFailureListener {
                     Toast.makeText(this, "Gagal Memasukkan Data Profil", Toast.LENGTH_SHORT).show()
                 }
         }
-
-//        currentImageUri?.let { uri ->
-//            storageRef.getReference("Gambar Barang")
-//                .child(System.currentTimeMillis().toString())
-//                .putFile(uri)
-//                .addOnSuccessListener {
-//                    val userId = FirebaseAuth.getInstance().currentUser!!.uid
-//                    val mapImage = mapOf(
-//                        "url" to it.toString()
-//                    )
-//                    val databaseReferences =
-//                        FirebaseDatabase.getInstance().getReference("gambarBarang")
-//                    databaseReferences.child(userId).setValue(mapImage)
-//                        .addOnSuccessListener {
-//                            Toast.makeText(this, "Sukses", Toast.LENGTH_SHORT).show()
-//                        }
-//                        .addOnFailureListener { error ->
-//                            Toast.makeText(this, it.toString(), Toast.LENGTH_SHORT).show()
-//                        }
-//                }
-//
-//        }
-
-//        // upload gambar dengan Kamera
-//        private fun startCamera() {
-//            currentImageUri = getImageUri(this)
-//            launcherIntentCamera.launch(currentImageUri)
-//        }
-//        // ngelaunch camera
-//        private val launcherIntentCamera = registerForActivityResult(
-//            ActivityResultContracts.TakePicture()
-//        ) { isSuccess ->
-//            if (isSuccess) {
-//                showImage()
-//            }
-//        }
-//        // Menampilkan Gambar di Tampilan kotak image
-//        private fun showImage() {
-//            currentImageUri?.let {
-//                Log.d("Image URI", "showImage: $it")
-//                binding.imgUser.setImageURI(it)
-//            }
-//        }
     }
 
     private fun checkLocationPermission() {
         if (ActivityCompat.checkSelfPermission
                 (this, Manifest.permission.ACCESS_FINE_LOCATION)
-            == PackageManager.PERMISSION_GRANTED)
-        {
+            == PackageManager.PERMISSION_GRANTED
+        ) {
             checkGps()
         } else {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                LOCATION_PERMISSION_REQUEST_CODE)
+            ActivityCompat.requestPermissions(
+                this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                LOCATION_PERMISSION_REQUEST_CODE
+            )
         }
     }
 
@@ -161,16 +116,16 @@ class EditProfil : AppCompatActivity() {
                     ApiException::class.java
                 )
                 getUserLocation()
-            } catch (e : ApiException){
+            } catch (e: ApiException) {
                 e.printStackTrace()
-                when (e.statusCode){
+                when (e.statusCode) {
                     LocationSettingsStatusCodes.RESOLUTION_REQUIRED ->
                         try {
-                        val resolveApiException = e as ResolvableApiException
+                            val resolveApiException = e as ResolvableApiException
                             resolveApiException.startResolutionForResult(this, LOCATION_PERMISSION_REQUEST_CODE)
-                    } catch (sendIntentException: IntentSender.SendIntentException){
+                        } catch (sendIntentException: IntentSender.SendIntentException) {
 
-                    }
+                        }
                     LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE -> {
 
                     }
@@ -198,8 +153,8 @@ class EditProfil : AppCompatActivity() {
             return
         }
         fusedLocationClient.lastLocation.addOnCompleteListener { task ->
-            val location = task.getResult()
-            if (location != null ){
+            val location = task.result
+            if (location != null) {
                 try {
                     val geocoder = Geocoder(this, Locale.getDefault())
                     val address = geocoder.getFromLocation(location.latitude, location.longitude, 1)
@@ -207,7 +162,7 @@ class EditProfil : AppCompatActivity() {
                     binding.inpCurrentLocProfil.setText(addressLine)
                     val addressLocation = address?.get(0)?.getAddressLine(0)
                     openLocation(addressLocation.toString())
-                } catch (e : IOException) {
+                } catch (e: IOException) {
 
                 }
             }
@@ -225,7 +180,7 @@ class EditProfil : AppCompatActivity() {
         }
     }
 
-    private fun setData(){
+    private fun setData() {
         val userId = FirebaseAuth.getInstance().currentUser!!.uid
         val refProfil = dbProfil.collection("Pedagang").document(userId)
         refProfil.get()
@@ -247,6 +202,37 @@ class EditProfil : AppCompatActivity() {
             }
     }
 
+    private fun saveImageToFirestore(imageUrl: String) {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        if (userId != null) {
+            val profilRef = dbProfil.collection("Pedagang").document(userId)
+            profilRef.update("imageUrl", imageUrl)
+                .addOnSuccessListener {
+                    Toast.makeText(this, "URL gambar berhasil disimpan di Firestore", Toast.LENGTH_SHORT).show()
+                }
+                .addOnFailureListener { e ->
+                    Toast.makeText(this, "Gagal menyimpan URL gambar di Firestore: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+        }
+    }
+
+    private fun getImageUrlFromStorage() {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        if (userId != null) {
+            val storageRef = Firebase.storage.reference.child("ProfilePedagang/$userId/FotoProfil.jpg")
+            storageRef.downloadUrl
+                .addOnSuccessListener { uri ->
+                    // URL gambar berhasil didapat
+                    val imageUrl = uri.toString()
+                    // Simpan URL gambar ke Firestore
+                    saveImageToFirestore(imageUrl)
+                }
+                .addOnFailureListener { e ->
+                    // Gagal mendapatkan URL gambar
+                    Toast.makeText(this, "Gagal mendapatkan URL gambar dari Firebase Storage: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+        }
+    }
 
     private fun requestLocationUpdates() {
         // Check location permission
