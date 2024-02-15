@@ -35,7 +35,13 @@
 
     <activity
         android:id="@+id/navigation_recyclerProdukActivity"
-        android:name="com.bornewtech.mitrapesaing.data.recyclerView.RecyclerProdukActivity"
+        android:name="com.bornewtech.mitrapesaing.ui.barang.recyclerview.RecViewBarang"
         android:label="activity_recycler_produk"
         tools:layout="@layout/activity_recycler_produk" />
+
+    <activity
+        android:id="@+id/navigation_Pesanan"
+        android:name="com.bornewtech.mitrapesaing.ui.order.Pesanan"
+        android:label="activity_pesanan"
+        tools:layout="@layout/activity_pesanan" />
 </navigation>

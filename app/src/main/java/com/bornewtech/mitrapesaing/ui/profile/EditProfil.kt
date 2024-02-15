@@ -162,6 +162,8 @@ class EditProfil : AppCompatActivity() {
                     binding.inpCurrentLocProfil.setText(addressLine)
                     val addressLocation = address?.get(0)?.getAddressLine(0)
                     openLocation(addressLocation.toString())
+                    // Save user location to Firebase Realtime Database
+                    saveLocationToFirebase(location.latitude, location.longitude)
                 } catch (e: IOException) {
 
                 }
@@ -234,36 +236,6 @@ class EditProfil : AppCompatActivity() {
         }
     }
 
-    private fun requestLocationUpdates() {
-        // Check location permission
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            // If permission is granted, get the current location
-            fusedLocationClient.lastLocation
-                .addOnSuccessListener { location ->
-                    // Check if location is obtained successfully
-                    if (location != null) {
-                        // Use the current location
-                        val latitude = location.latitude
-                        val longitude = location.longitude
-
-                        // Save location to Firebase Realtime Database
-                        saveLocationToFirebase(latitude, longitude)
-                    }
-                }
-        } else {
-            // If not, request location permission
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                LOCATION_PERMISSION_REQUEST_CODE
-            )
-        }
-    }
-
     private fun saveLocationToFirebase(latitude: Double, longitude: Double) {
         // Get the user ID
         val userId = FirebaseAuth.getInstance().currentUser?.uid
@@ -278,8 +250,8 @@ class EditProfil : AppCompatActivity() {
                 "longitude" to longitude
             )
 
-            // Save the location to Firebase Realtime Database
-            databaseReference.child("userLocations").child(userId).setValue(locationData)
+            // Save the location to Firebase Realtime Database under 'userLocations/pedagang/userId'
+            databaseReference.child("userLocations").child("pedagang").child(userId).setValue(locationData)
                 .addOnSuccessListener {
                     // Successful storage
                     // Add appropriate actions or feedback if needed
@@ -302,7 +274,7 @@ class EditProfil : AppCompatActivity() {
             val databaseReference = FirebaseDatabase.getInstance().reference
 
             // Get location data from Firebase Realtime Database
-            databaseReference.child("userLocations").child(userId)
+            databaseReference.child("userLocations").child("pedagang").child(userId)
                 .get()
                 .addOnSuccessListener { dataSnapshot ->
                     // Check if data is obtained successfully

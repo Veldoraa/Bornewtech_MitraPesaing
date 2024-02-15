@@ -9,6 +9,7 @@ import com.bornewtech.mitrapesaing.R
 import com.bornewtech.mitrapesaing.databinding.ActivityProfilBinding
 import com.bornewtech.mitrapesaing.main.MainActivity
 import com.bornewtech.mitrapesaing.ui.login.PraLogin
+import com.bornewtech.mitrapesaing.ui.order.Pesanan
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -33,6 +34,10 @@ class Profil : AppCompatActivity() {
         setData()
 
         firebaseAuth = FirebaseAuth.getInstance()
+
+        binding.btnPesanan.setOnClickListener {
+            startActivity(Intent(this, Pesanan::class.java))
+        }
 
         binding.editProfil.setOnClickListener {
             startActivity(Intent(this, EditProfil::class.java))

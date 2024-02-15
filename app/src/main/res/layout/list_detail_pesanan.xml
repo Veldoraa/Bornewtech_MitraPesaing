@@ -33,12 +33,12 @@
             app:layout_constraintVertical_bias="0.541" />
 
         <TextView
-            android:id="@+id/namaorangTransaksi"
+            android:id="@+id/namaProdukPesanan"
             android:layout_width="180dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:fontFamily="@font/roboto_bold"
-            android:text="player 1"
+            android:text="Produk 1"
             android:textColor="@color/black"
             android:textSize="15sp"
             android:textStyle="bold"
@@ -47,69 +47,69 @@
             android:lines="1" />
 
         <TextView
-            android:id="@+id/statusTransaksi"
+            android:id="@+id/hargaProdukPesanan"
             android:layout_width="180dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:fontFamily="@font/roboto_bold"
-            android:text="Sudah Bayar"
+            android:text="Harga produk pesanan"
             android:textColor="@color/black"
             android:textSize="15sp"
             android:textStyle="bold"
             app:layout_constraintStart_toEndOf="@id/imageCartProduct"
-            app:layout_constraintTop_toBottomOf="@id/namaorangTransaksi" />
+            app:layout_constraintTop_toBottomOf="@id/namaProdukPesanan" />
 
         <TextView
-            android:id="@+id/tujuanAntar"
+            android:id="@+id/kuantitiProdukPesanan"
             android:layout_width="180dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:fontFamily="@font/roboto_bold"
-            android:text="Rumah"
+            android:text="1"
             android:textColor="@color/black"
             android:textSize="15sp"
             android:textStyle="bold"
             app:layout_constraintStart_toEndOf="@id/imageCartProduct"
-            app:layout_constraintTop_toBottomOf="@+id/statusTransaksi" />
-
-        <TextView
-            android:id="@+id/hargaProduk"
-            android:layout_width="180dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:fontFamily="@font/roboto_bold"
-            android:text="Harga total"
-            android:textColor="@color/black"
-            android:textSize="15sp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toEndOf="@id/imageCartProduct"
-            app:layout_constraintTop_toBottomOf="@+id/tujuanAntar" />
+            app:layout_constraintTop_toBottomOf="@+id/hargaProdukPesanan" />
 
 <!--        <TextView-->
-<!--            android:id="@+id/pembeliId"-->
+<!--            android:id="@+id/hargaProduk"-->
 <!--            android:layout_width="180dp"-->
 <!--            android:layout_height="wrap_content"-->
 <!--            android:layout_marginStart="8dp"-->
-<!--            android:text="pembeli ID"-->
-<!--            app:layout_constraintStart_toEndOf="@+id/imageCartProduct"-->
-<!--            app:layout_constraintTop_toBottomOf="@+id/pedagangId" />-->
+<!--            android:fontFamily="@font/roboto_bold"-->
+<!--            android:text="Harga total"-->
+<!--            android:textColor="@color/black"-->
+<!--            android:textSize="15sp"-->
+<!--            android:textStyle="bold"-->
+<!--            app:layout_constraintStart_toEndOf="@id/imageCartProduct"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/kuantitiProdukPesanan" />-->
 
-<!--        <TextView-->
-<!--            android:id="@+id/latlng"-->
-<!--            android:layout_width="300dp"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginStart="8dp"-->
-<!--            android:text="Lat Lng / Lokasi produk sekarang si pembeli"-->
-<!--            app:layout_constraintStart_toEndOf="@+id/imageCartProduct"-->
-<!--            app:layout_constraintTop_toBottomOf="@+id/pembeliId" />-->
+        <!--        <TextView-->
+        <!--            android:id="@+id/pembeliId"-->
+        <!--            android:layout_width="180dp"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_marginStart="8dp"-->
+        <!--            android:text="pembeli ID"-->
+        <!--            app:layout_constraintStart_toEndOf="@+id/imageCartProduct"-->
+        <!--            app:layout_constraintTop_toBottomOf="@+id/pedagangId" />-->
 
-<!--        <TextView-->
-<!--            android:id="@+id/produkId"-->
-<!--            android:layout_width="300dp"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:text="Id Produk"-->
-<!--            app:layout_constraintStart_toStartOf="@+id/jumlahBarangPerTransaksi"-->
-<!--            app:layout_constraintTop_toBottomOf="@+id/latlng" />-->
+        <!--        <TextView-->
+        <!--            android:id="@+id/latlng"-->
+        <!--            android:layout_width="300dp"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_marginStart="8dp"-->
+        <!--            android:text="Lat Lng / Lokasi produk sekarang si pembeli"-->
+        <!--            app:layout_constraintStart_toEndOf="@+id/imageCartProduct"-->
+        <!--            app:layout_constraintTop_toBottomOf="@+id/pembeliId" />-->
+
+        <!--        <TextView-->
+        <!--            android:id="@+id/produkId"-->
+        <!--            android:layout_width="300dp"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:text="Id Produk"-->
+        <!--            app:layout_constraintStart_toStartOf="@+id/jumlahBarangPerTransaksi"-->
+        <!--            app:layout_constraintTop_toBottomOf="@+id/latlng" />-->
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
