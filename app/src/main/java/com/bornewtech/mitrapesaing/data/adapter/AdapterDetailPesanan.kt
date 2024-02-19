@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bornewtech.mitrapesaing.R
 import com.bornewtech.mitrapesaing.data.firestoreDb.CartItem
 
-class AdapterDetailPesanan(private val dataList: List<CartItem>) : RecyclerView.Adapter<AdapterDetailPesanan.ViewHolder>() {
+class AdapterDetailPesanan(private var dataList: MutableList<CartItem>) : RecyclerView.Adapter<AdapterDetailPesanan.ViewHolder>() {
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val namaProdukPesanan: TextView = itemView.findViewById(R.id.namaProdukPesanan)
@@ -30,5 +30,11 @@ class AdapterDetailPesanan(private val dataList: List<CartItem>) : RecyclerView.
 
     override fun getItemCount(): Int {
         return dataList.size
+    }
+
+    fun updateData(newData: List<CartItem>) {
+        dataList.clear() // Bersihkan dataList sebelum menambahkan data baru
+        dataList.addAll(newData) // Tambahkan data baru ke dataList
+        notifyDataSetChanged() // Beri tahu adapter bahwa data telah berubah
     }
 }

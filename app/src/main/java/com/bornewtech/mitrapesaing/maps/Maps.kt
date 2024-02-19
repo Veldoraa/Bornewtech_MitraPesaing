@@ -197,7 +197,7 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
                         currentLocation.longitude,
                         it.latitude,
                         it.longitude
-                    ) <= 0.5 // 0.5 km = 500 meter
+                    ) <= 5.0 // 0.5 km = 500 meter
                 }
 
                 // Hapus semua marker sebelum menambahkan yang baru

@@ -12,5 +12,5 @@ data class CartItem(
     var productQuantity: Int,
     var pedagangId: String?,
     var pembeliId: String?,
-    val imageUrl: String?
+    val imageUrl: String? // Tambahkan properti imageUrl untuk menyimpan URL gambar produk
 ) : Parcelable

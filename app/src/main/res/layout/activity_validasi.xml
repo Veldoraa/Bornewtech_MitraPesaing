@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:fillViewport="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbarBilling"
+            android:layout_width="0dp"
+            android:layout_height="?actionBarSize"
+            app:layout_constraintEnd_toEndOf="@id/rightGuideline"
+            app:layout_constraintStart_toStartOf="@id/leftGuideline"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <ImageView
+                    android:id="@+id/imageCloseBilling"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_close"
+                    android:scaleType="centerInside"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@color/black" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="25dp"
+                    android:fontFamily="@font/roboto_bold"
+                    android:text="Validasi"
+                    android:textColor="@color/black"
+                    android:textSize="20sp"
+                    app:layout_constraintBottom_toBottomOf="@id/imageCloseBilling"
+                    app:layout_constraintStart_toStartOf="@id/imageCloseBilling"
+                    app:layout_constraintTop_toTopOf="@id/imageCloseBilling" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.appcompat.widget.Toolbar>
+
+
+        <TextView
+            android:id="@+id/tvPaymentMethods"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Validasi Pesanan "
+            android:fontFamily="@font/roboto_bold"
+            android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@id/toolbarBilling"
+            app:layout_constraintStart_toStartOf="@id/leftGuideline"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            android:layout_marginTop="10dp"/>
+
+        <TextView
+            android:id="@+id/tvPaymentExplanation"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Di platform ini anda bisa menerima dan menolak jika menurut anda jarak tempuh antar produk pesanan jauh"
+            android:fontFamily="@font/roboto_medium"
+            app:layout_constraintTop_toBottomOf="@id/tvPaymentMethods"
+            app:layout_constraintStart_toStartOf="@id/leftGuideline"
+            app:layout_constraintEnd_toEndOf="@id/rightGuideline"
+            android:textColor="@color/black"
+            android:textSize="15sp" />
+
+        <View
+            android:id="@+id/topLine"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/white_background"
+            app:layout_constraintTop_toBottomOf="@id/tvPaymentExplanation"
+            app:layout_constraintStart_toStartOf="@id/leftGuideline"
+            app:layout_constraintEnd_toEndOf="@id/rightGuideline"
+            android:backgroundTint="@color/gray200"
+            />
+
+        <Button
+            android:id="@+id/buttonTerima"
+            style="@style/OutlinedRoundedBox"
+            android:layout_width="250dp"
+            android:layout_height="66dp"
+            android:layout_marginTop="48dp"
+            android:text="Terima Pesanan"
+            app:layout_constraintEnd_toStartOf="@+id/rightGuideline"
+            app:layout_constraintHorizontal_bias="0.496"
+            app:layout_constraintStart_toStartOf="@+id/leftGuideline"
+            app:layout_constraintTop_toBottomOf="@+id/topLine" />
+
+        <Button
+            android:id="@+id/buttonTolak"
+            style="@style/OutlinedRoundedBox"
+            android:layout_width="250dp"
+            android:layout_height="66dp"
+            android:layout_marginTop="20dp"
+            android:text="Tolak Pesanan"
+            app:layout_constraintEnd_toStartOf="@+id/rightGuideline"
+            app:layout_constraintHorizontal_bias="0.496"
+            app:layout_constraintStart_toStartOf="@+id/leftGuideline"
+            app:layout_constraintTop_toBottomOf="@+id/buttonTerima" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/leftGuideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.04" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/rightGuideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.96" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>
