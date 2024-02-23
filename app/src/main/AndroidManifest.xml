@@ -22,13 +22,13 @@
         android:theme="@style/Theme.MitraPesaing"
         tools:targetApi="31">
         <activity
-            android:name=".ui.order.Validasi"
-            android:exported="false" />
-        <activity
             android:name=".ui.order.DetailPesanan"
             android:exported="false" />
         <activity
             android:name=".ui.order.Pesanan"
+            android:exported="false" />
+        <activity
+            android:name=".ui.order.Validasi"
             android:exported="false" />
         <activity
             android:name=".ui.barang.recyclerview.RecViewBarang"

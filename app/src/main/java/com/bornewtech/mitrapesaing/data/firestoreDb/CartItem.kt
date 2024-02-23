@@ -1,16 +1,14 @@
 package com.bornewtech.mitrapesaing.data.firestoreDb
 
-import android.os.Parcelable
-import android.util.Log
-import kotlinx.parcelize.Parcelize
+import java.io.Serializable
 
-@Parcelize
+
 data class CartItem(
-    val productId: String?,
-    val productName: String,
-    val productPrice: Double,
-    var productQuantity: Int,
-    var pedagangId: String?,
-    var pembeliId: String?,
-    val imageUrl: String? // Tambahkan properti imageUrl untuk menyimpan URL gambar produk
-) : Parcelable
+    val imageUrl: String = "",
+    val pedagangId: String = "",
+    val pembeliId: String = "",
+    val productId: String = "",
+    val productName: String = "",
+    val productPrice: Double = 0.0,
+    val productQuantity: Int = 0,
+) : Serializable

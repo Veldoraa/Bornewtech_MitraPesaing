@@ -1,5 +1,6 @@
 package com.bornewtech.mitrapesaing.data.adapter
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -38,10 +39,11 @@ class AdapterPesanan(private val dataList: MutableList<Orderan>) : RecyclerView.
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.list_pesanan, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_pesanan, parent, false)
         return ViewHolder(view)
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val data = dataList[position]
         holder.namaPembeli.text = data.namaPembeli
@@ -52,4 +54,5 @@ class AdapterPesanan(private val dataList: MutableList<Orderan>) : RecyclerView.
     override fun getItemCount(): Int {
         return dataList.size
     }
+
 }

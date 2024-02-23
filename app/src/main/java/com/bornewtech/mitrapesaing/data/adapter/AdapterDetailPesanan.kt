@@ -8,12 +8,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bornewtech.mitrapesaing.R
 import com.bornewtech.mitrapesaing.data.firestoreDb.CartItem
 
-class AdapterDetailPesanan(private var dataList: MutableList<CartItem>) : RecyclerView.Adapter<AdapterDetailPesanan.ViewHolder>() {
+class AdapterDetailPesanan : RecyclerView.Adapter<AdapterDetailPesanan.ViewHolder>() {
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val namaProdukPesanan: TextView = itemView.findViewById(R.id.namaProdukPesanan)
-        val hargaProdukPesanan: TextView = itemView.findViewById(R.id.hargaProdukPesanan)
-        val kuantitiProdukPesanan: TextView = itemView.findViewById(R.id.kuantitiProdukPesanan)
+    private var cartItems: List<CartItem> = emptyList()
+
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val productName: TextView = itemView.findViewById(R.id.namaProdukPesanan)
+        val productPrice: TextView = itemView.findViewById(R.id.hargaProdukPesanan)
+        val productQuantity: TextView = itemView.findViewById(R.id.kuantitiProdukPesanan)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -22,19 +24,18 @@ class AdapterDetailPesanan(private var dataList: MutableList<CartItem>) : Recycl
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val data = dataList[position]
-        holder.namaProdukPesanan.text = data.productName
-        holder.hargaProdukPesanan.text = "Harga: ${data.productPrice}"
-        holder.kuantitiProdukPesanan.text = "Kuantitas: ${data.productQuantity}"
+        val item = cartItems[position]
+        holder.productName.text = item.productName
+        holder.productPrice.text = "Harga: ${item.productPrice}"
+        holder.productQuantity.text = "Kuantitas: ${item.productQuantity}"
     }
 
     override fun getItemCount(): Int {
-        return dataList.size
+        return cartItems.size
     }
 
-    fun updateData(newData: List<CartItem>) {
-        dataList.clear() // Bersihkan dataList sebelum menambahkan data baru
-        dataList.addAll(newData) // Tambahkan data baru ke dataList
-        notifyDataSetChanged() // Beri tahu adapter bahwa data telah berubah
+    fun setData(data: List<CartItem>) {
+        cartItems = data
+        notifyDataSetChanged()
     }
 }

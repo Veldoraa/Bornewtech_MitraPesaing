@@ -84,7 +84,7 @@
             app:layout_constraintEnd_toEndOf="@id/rightGuideLine"
             app:layout_constraintStart_toStartOf="@id/leftGuideLine"
             app:layout_constraintTop_toBottomOf="@id/progressbarCart"
-            tools:listitem="@layout/list_pesanan" />
+            tools:listitem="@layout/item_pesanan" />
 
         <com.google.android.material.progressindicator.LinearProgressIndicator
             android:id="@+id/progressbarCart"
@@ -97,62 +97,62 @@
             app:layout_constraintTop_toBottomOf="@id/toolbarCart" />
 
 
-<!--        <androidx.constraintlayout.widget.ConstraintLayout-->
-<!--            android:id="@+id/totalBoxContainer"-->
-<!--            android:layout_width="0dp"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginTop="50dp"-->
-<!--            android:background="@drawable/total_box_background"-->
-<!--            app:layout_constraintEnd_toEndOf="@id/rightGuideLine"-->
-<!--            app:layout_constraintStart_toStartOf="@id/leftGuideLine"-->
-<!--            app:layout_constraintTop_toBottomOf="@id/bottomGuideLine">-->
+        <!--        <androidx.constraintlayout.widget.ConstraintLayout-->
+        <!--            android:id="@+id/totalBoxContainer"-->
+        <!--            android:layout_width="0dp"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_marginTop="50dp"-->
+        <!--            android:background="@drawable/total_box_background"-->
+        <!--            app:layout_constraintEnd_toEndOf="@id/rightGuideLine"-->
+        <!--            app:layout_constraintStart_toStartOf="@id/leftGuideLine"-->
+        <!--            app:layout_constraintTop_toBottomOf="@id/bottomGuideLine">-->
 
 
-<!--            <TextView-->
-<!--                android:layout_width="0dp"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginStart="10dp"-->
-<!--                android:layout_marginTop="15dp"-->
-<!--                android:layout_marginBottom="15dp"-->
-<!--                android:fontFamily="@font/roboto_medium"-->
-<!--                android:text="Total"-->
-<!--                android:textColor="@color/black"-->
-<!--                android:textSize="16sp"-->
-<!--                app:layout_constraintBottom_toBottomOf="parent"-->
-<!--                app:layout_constraintStart_toStartOf="parent"-->
-<!--                app:layout_constraintTop_toTopOf="parent" />-->
+        <!--            <TextView-->
+        <!--                android:layout_width="0dp"-->
+        <!--                android:layout_height="wrap_content"-->
+        <!--                android:layout_marginStart="10dp"-->
+        <!--                android:layout_marginTop="15dp"-->
+        <!--                android:layout_marginBottom="15dp"-->
+        <!--                android:fontFamily="@font/roboto_medium"-->
+        <!--                android:text="Total"-->
+        <!--                android:textColor="@color/black"-->
+        <!--                android:textSize="16sp"-->
+        <!--                app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--                app:layout_constraintStart_toStartOf="parent"-->
+        <!--                app:layout_constraintTop_toTopOf="parent" />-->
 
 
-<!--            <TextView-->
-<!--                android:id="@+id/tvTotalPrice"-->
-<!--                android:layout_width="0dp"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginTop="15dp"-->
-<!--                android:layout_marginEnd="10dp"-->
-<!--                android:layout_marginBottom="15dp"-->
-<!--                android:fontFamily="@font/roboto_medium"-->
-<!--                android:text="Rp"-->
-<!--                android:textColor="@color/black"-->
-<!--                android:textSize="16sp"-->
-<!--                app:layout_constraintBottom_toBottomOf="parent"-->
-<!--                app:layout_constraintEnd_toEndOf="parent"-->
-<!--                app:layout_constraintTop_toTopOf="parent" />-->
+        <!--            <TextView-->
+        <!--                android:id="@+id/tvTotalPrice"-->
+        <!--                android:layout_width="0dp"-->
+        <!--                android:layout_height="wrap_content"-->
+        <!--                android:layout_marginTop="15dp"-->
+        <!--                android:layout_marginEnd="10dp"-->
+        <!--                android:layout_marginBottom="15dp"-->
+        <!--                android:fontFamily="@font/roboto_medium"-->
+        <!--                android:text="Rp"-->
+        <!--                android:textColor="@color/black"-->
+        <!--                android:textSize="16sp"-->
+        <!--                app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--                app:layout_constraintEnd_toEndOf="parent"-->
+        <!--                app:layout_constraintTop_toTopOf="parent" />-->
 
 
-<!--        </androidx.constraintlayout.widget.ConstraintLayout>-->
+        <!--        </androidx.constraintlayout.widget.ConstraintLayout>-->
 
 
-<!--        <Button-->
-<!--            android:id="@+id/buttonPembayaran"-->
-<!--            style="@style/OutlinedRoundedBox"-->
-<!--            android:layout_width="250dp"-->
-<!--            android:layout_height="66dp"-->
-<!--            android:layout_marginTop="40dp"-->
-<!--            android:text="Check out"-->
-<!--            app:layout_constraintEnd_toStartOf="@+id/rightGuideLine"-->
-<!--            app:layout_constraintHorizontal_bias="0.496"-->
-<!--            app:layout_constraintStart_toStartOf="@+id/leftGuideLine"-->
-<!--            app:layout_constraintTop_toBottomOf="@+id/rvCart" />-->
+        <!--        <Button-->
+        <!--            android:id="@+id/buttonPembayaran"-->
+        <!--            style="@style/OutlinedRoundedBox"-->
+        <!--            android:layout_width="250dp"-->
+        <!--            android:layout_height="66dp"-->
+        <!--            android:layout_marginTop="40dp"-->
+        <!--            android:text="Check out"-->
+        <!--            app:layout_constraintEnd_toStartOf="@+id/rightGuideLine"-->
+        <!--            app:layout_constraintHorizontal_bias="0.496"-->
+        <!--            app:layout_constraintStart_toStartOf="@+id/leftGuideLine"-->
+        <!--            app:layout_constraintTop_toBottomOf="@+id/rvCart" />-->
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

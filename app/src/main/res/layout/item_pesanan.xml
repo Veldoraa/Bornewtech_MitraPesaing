@@ -85,31 +85,31 @@
             app:layout_constraintStart_toEndOf="@id/imageCartProduct"
             app:layout_constraintTop_toBottomOf="@+id/tujuanAntar" />
 
-<!--        <TextView-->
-<!--            android:id="@+id/pembeliId"-->
-<!--            android:layout_width="180dp"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginStart="8dp"-->
-<!--            android:text="pembeli ID"-->
-<!--            app:layout_constraintStart_toEndOf="@+id/imageCartProduct"-->
-<!--            app:layout_constraintTop_toBottomOf="@+id/pedagangId" />-->
+        <!--        <TextView-->
+        <!--            android:id="@+id/pembeliId"-->
+        <!--            android:layout_width="180dp"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_marginStart="8dp"-->
+        <!--            android:text="pembeli ID"-->
+        <!--            app:layout_constraintStart_toEndOf="@+id/imageCartProduct"-->
+        <!--            app:layout_constraintTop_toBottomOf="@+id/pedagangId" />-->
 
-<!--        <TextView-->
-<!--            android:id="@+id/latlng"-->
-<!--            android:layout_width="300dp"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginStart="8dp"-->
-<!--            android:text="Lat Lng / Lokasi produk sekarang si pembeli"-->
-<!--            app:layout_constraintStart_toEndOf="@+id/imageCartProduct"-->
-<!--            app:layout_constraintTop_toBottomOf="@+id/pembeliId" />-->
+        <!--        <TextView-->
+        <!--            android:id="@+id/latlng"-->
+        <!--            android:layout_width="300dp"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_marginStart="8dp"-->
+        <!--            android:text="Lat Lng / Lokasi produk sekarang si pembeli"-->
+        <!--            app:layout_constraintStart_toEndOf="@+id/imageCartProduct"-->
+        <!--            app:layout_constraintTop_toBottomOf="@+id/pembeliId" />-->
 
-<!--        <TextView-->
-<!--            android:id="@+id/produkId"-->
-<!--            android:layout_width="300dp"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:text="Id Produk"-->
-<!--            app:layout_constraintStart_toStartOf="@+id/jumlahBarangPerTransaksi"-->
-<!--            app:layout_constraintTop_toBottomOf="@+id/latlng" />-->
+        <!--        <TextView-->
+        <!--            android:id="@+id/produkId"-->
+        <!--            android:layout_width="300dp"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:text="Id Produk"-->
+        <!--            app:layout_constraintStart_toStartOf="@+id/jumlahBarangPerTransaksi"-->
+        <!--            app:layout_constraintTop_toBottomOf="@+id/latlng" />-->
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
