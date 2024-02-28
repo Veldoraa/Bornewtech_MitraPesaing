@@ -75,6 +75,7 @@
             android:orientation="horizontal"
             app:layout_constraintGuide_percent="0.68" />
 
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvCartDetail"
             android:layout_width="0dp"
@@ -82,10 +83,11 @@
             android:layout_marginTop="5dp"
             app:layout_constraintBottom_toTopOf="@id/bottomGuideLine"
             app:layout_constraintEnd_toEndOf="@id/rightGuideLine"
+            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="@id/leftGuideLine"
             app:layout_constraintTop_toBottomOf="@id/progressbarCart"
+            app:layout_constraintVertical_bias="1.0"
             tools:listitem="@layout/list_detail_pesanan" />
-
 
         <com.google.android.material.progressindicator.LinearProgressIndicator
             android:id="@+id/progressbarCart"

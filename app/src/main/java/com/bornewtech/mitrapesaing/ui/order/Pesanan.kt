@@ -38,6 +38,9 @@ class Pesanan : AppCompatActivity() {
                 // Start DetailPesanan activity with selected item
                 val intent = Intent(this@Pesanan, DetailPesanan::class.java)
                 intent.putExtra("pembeliId", orderan.pembeliId) // Mengirim pembeliId ke DetailPesanan
+                intent.putExtra("status", orderan.status) // Mengirim status ke DetailPesanan
+                intent.putExtra("totalHarga", orderan.totalHarga) // Mengirim total harga ke DetailPesanan
+                Log.d("Pesanan", "Data sent: pembeliId=${orderan.pembeliId}, status=${orderan.status}, totalHarga=${orderan.totalHarga}") // Logging data yang dikirim
                 startActivity(intent)
             }
         })
@@ -65,6 +68,7 @@ class Pesanan : AppCompatActivity() {
         }
     }
 }
+
 
 
 //class Pesanan : AppCompatActivity() {

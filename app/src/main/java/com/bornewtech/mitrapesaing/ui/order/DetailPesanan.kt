@@ -9,9 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bornewtech.mitrapesaing.R
 import com.bornewtech.mitrapesaing.data.adapter.AdapterDetailPesanan
-import com.bornewtech.mitrapesaing.data.firestoreDb.Orderan
 import com.bornewtech.mitrapesaing.data.firestoreDb.TransaksiDetail
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
 class DetailPesanan : AppCompatActivity() {
@@ -33,12 +31,22 @@ class DetailPesanan : AppCompatActivity() {
         recyclerView = findViewById(R.id.rvCartDetail)
 
         val pembeliId = intent.getStringExtra("pembeliId")
+        val status = intent.getStringExtra("status")
+        val totalHarga = intent.getDoubleExtra("totalHarga", 0.0)
+
+        // Log data yang diterima melalui Intent
+        Log.d("DetailPesanan", "Data received: pembeliId=$pembeliId, status=$status, totalHarga=$totalHarga")
+
         pembeliId?.let {
             // Simpan pembeliId dari intent
             this.pembeliId = pembeliId
             // Memuat data dari Firestore
             getDataFromFirestore()
         }
+
+        // Tampilkan status dan total harga
+        tvStatus.text = status
+        tvTotalPrice.text = "Rp $totalHarga"
 
         // Inisialisasi adapter RecyclerView
         adapterDetailPesanan = AdapterDetailPesanan()
@@ -79,6 +87,7 @@ class DetailPesanan : AppCompatActivity() {
             }
     }
 }
+
 
 
 //class DetailPesanan : AppCompatActivity() {
