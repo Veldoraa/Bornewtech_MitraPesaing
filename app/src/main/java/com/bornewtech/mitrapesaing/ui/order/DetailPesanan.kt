@@ -24,6 +24,7 @@ class DetailPesanan : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail_pesanan)
+        supportActionBar?.hide()
 
         // Inisialisasi TextView dan RecyclerView
         tvStatus = findViewById(R.id.tvStatus)
