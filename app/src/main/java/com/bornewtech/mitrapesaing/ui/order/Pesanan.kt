@@ -1,9 +1,9 @@
 package com.bornewtech.mitrapesaing.ui.order
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bornewtech.mitrapesaing.R
@@ -41,7 +41,7 @@ class Pesanan : AppCompatActivity() {
                 intent.putExtra("pembeliId", orderan.pembeliId) // Mengirim pembeliId ke DetailPesanan
                 intent.putExtra("status", orderan.status) // Mengirim status ke DetailPesanan
                 intent.putExtra("totalHarga", orderan.totalHarga) // Mengirim total harga ke DetailPesanan
-                Log.d("Pesanan", "Data sent: pembeliId=${orderan.pembeliId}, status=${orderan.status}, totalHarga=${orderan.totalHarga}") // Logging data yang dikirim
+                intent.putExtra("alamatLengkap", orderan.alamatLengkap) // Mengirim alamat lengkap ke DetailPesanan
                 startActivity(intent)
             }
         })
@@ -69,6 +69,80 @@ class Pesanan : AppCompatActivity() {
         }
     }
 }
+
+
+
+//package com.bornewtech.mitrapesaing.ui.order
+//
+//import android.content.Intent
+//import androidx.appcompat.app.AppCompatActivity
+//import android.os.Bundle
+//import android.util.Log
+//import androidx.recyclerview.widget.LinearLayoutManager
+//import androidx.recyclerview.widget.RecyclerView
+//import com.bornewtech.mitrapesaing.R
+//import com.bornewtech.mitrapesaing.data.adapter.AdapterPesanan
+//import com.bornewtech.mitrapesaing.data.firestoreDb.Orderan
+//import com.google.firebase.auth.FirebaseAuth
+//import com.google.firebase.firestore.FirebaseFirestore
+//
+//class Pesanan : AppCompatActivity() {
+//
+//    private lateinit var recyclerView: RecyclerView
+//    private lateinit var adapterPesanan: AdapterPesanan
+//    private val firestore = FirebaseFirestore.getInstance()
+//    private val pesananList = mutableListOf<Orderan>()
+//
+//    override fun onCreate(savedInstanceState: Bundle?) {
+//        super.onCreate(savedInstanceState)
+//        setContentView(R.layout.activity_pesanan)
+//        supportActionBar?.hide()
+//
+//        recyclerView = findViewById(R.id.rvCart)
+//        adapterPesanan = AdapterPesanan(pesananList)
+//
+//        recyclerView.apply {
+//            layoutManager = LinearLayoutManager(this@Pesanan)
+//            adapter = adapterPesanan
+//        }
+//
+//        adapterPesanan.setOnItemClickListener(object : AdapterPesanan.OnItemClickListener {
+//            override fun onItemClick(orderan: Orderan) {
+//                Log.d("Pesanan", "Item clicked: $orderan")
+//
+//                // Start DetailPesanan activity with selected item
+//                val intent = Intent(this@Pesanan, DetailPesanan::class.java)
+//                intent.putExtra("pembeliId", orderan.pembeliId) // Mengirim pembeliId ke DetailPesanan
+//                intent.putExtra("status", orderan.status) // Mengirim status ke DetailPesanan
+//                intent.putExtra("totalHarga", orderan.totalHarga) // Mengirim total harga ke DetailPesanan
+//                Log.d("Pesanan", "Data sent: pembeliId=${orderan.pembeliId}, status=${orderan.status}, totalHarga=${orderan.totalHarga}") // Logging data yang dikirim
+//                startActivity(intent)
+//            }
+//        })
+//
+//        loadData()
+//    }
+//
+//    private fun loadData() {
+//        val pedagangId = FirebaseAuth.getInstance().currentUser?.uid
+//        if (pedagangId != null) {
+//            firestore.collection("riwayatTransaksi")
+//                .get()
+//                .addOnSuccessListener { result ->
+//                    for (document in result) {
+//                        val orderan = document.toObject(Orderan::class.java)
+//                        pesananList.add(orderan)
+//                    }
+//                    adapterPesanan.notifyDataSetChanged()
+//                }
+//                .addOnFailureListener { exception ->
+//                    Log.e("Pesanan", "Error fetching data", exception)
+//                }
+//        } else {
+//            Log.d("Pesanan", "PedagangId is null")
+//        }
+//    }
+//}
 
 
 

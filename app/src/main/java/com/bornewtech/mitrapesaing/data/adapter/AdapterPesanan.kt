@@ -26,6 +26,7 @@ class AdapterPesanan(private val dataList: MutableList<Orderan>) : RecyclerView.
         val namaPembeli: TextView = itemView.findViewById(R.id.namaorangTransaksi)
         val statusTransaksi: TextView = itemView.findViewById(R.id.statusTransaksi)
         val hargaProduk: TextView = itemView.findViewById(R.id.hargaProduk)
+        val alamatLengkap: TextView = itemView.findViewById(R.id.tujuanAntar)
 
         init {
             // Set listener untuk item
@@ -48,6 +49,7 @@ class AdapterPesanan(private val dataList: MutableList<Orderan>) : RecyclerView.
         val data = dataList[position]
         holder.namaPembeli.text = data.namaPembeli
         holder.statusTransaksi.text = data.status
+        holder.alamatLengkap.text = data.alamatLengkap
         holder.hargaProduk.text = "Harga total: ${data.totalHarga}"
     }
 
