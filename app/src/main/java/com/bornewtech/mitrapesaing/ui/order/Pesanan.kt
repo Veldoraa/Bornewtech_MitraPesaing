@@ -1,3 +1,82 @@
+//package com.bornewtech.mitrapesaing.ui.order
+//
+//import android.content.Intent
+//import android.os.Bundle
+//import android.util.Log
+//import androidx.appcompat.app.AppCompatActivity
+//import androidx.recyclerview.widget.LinearLayoutManager
+//import androidx.recyclerview.widget.RecyclerView
+//import com.bornewtech.mitrapesaing.R
+//import com.bornewtech.mitrapesaing.data.adapter.AdapterPesanan
+//import com.bornewtech.mitrapesaing.data.firestoreDb.Orderan
+//import com.google.firebase.auth.FirebaseAuth
+//import com.google.firebase.firestore.FirebaseFirestore
+//
+//class Pesanan : AppCompatActivity() {
+//
+//    private lateinit var recyclerView: RecyclerView
+//    private lateinit var adapterPesanan: AdapterPesanan
+//    private val firestore = FirebaseFirestore.getInstance()
+//    private val pesananList = mutableListOf<Orderan>()
+//
+//    override fun onCreate(savedInstanceState: Bundle?) {
+//        super.onCreate(savedInstanceState)
+//        setContentView(R.layout.activity_pesanan)
+//        supportActionBar?.hide()
+//
+//        recyclerView = findViewById(R.id.rvCart)
+//        adapterPesanan = AdapterPesanan(pesananList)
+//
+//        recyclerView.apply {
+//            layoutManager = LinearLayoutManager(this@Pesanan)
+//            adapter = adapterPesanan
+//        }
+//
+//        // Set listener untuk item click pada RecyclerView
+//        adapterPesanan.setOnItemClickListener(object : AdapterPesanan.OnItemClickListener {
+//            override fun onItemClick(orderan: Orderan) {
+//                Log.d("Pesanan", "Item clicked: $orderan")
+//
+//                val intent = Intent(this@Pesanan, DetailPesanan::class.java)
+//                intent.putExtra("pembeliId", orderan.pembeliId)
+//                intent.putExtra("status", orderan.status)
+//                intent.putExtra("totalHarga", orderan.totalHarga) // Tambahkan totalHarga
+//                intent.putExtra("alamatLengkap", orderan.alamatLengkap)
+//                intent.putExtra("idTransaksi", orderan.idTransaksi) // Tambahkan idTransaksi
+//                startActivity(intent)
+//            }
+//        })
+//
+//        loadData()
+//    }
+//
+//    private fun loadData() {
+//        val pedagangId = FirebaseAuth.getInstance().currentUser?.uid
+//        if (pedagangId != null) {
+//            firestore.collection("riwayatTransaksi")
+//                .whereEqualTo("pedagangId", pedagangId) // Filter data berdasarkan pedagangId
+//                .get()
+//                .addOnSuccessListener { result ->
+//                    pesananList.clear() // Bersihkan list sebelum menambahkan data baru
+//                    for (document in result) {
+//                        val orderan = document.toObject(Orderan::class.java)
+//                        pesananList.add(orderan)
+//                    }
+//                    adapterPesanan.notifyDataSetChanged() // Notifikasi perubahan data
+//                }
+//                .addOnFailureListener { exception ->
+//                    Log.e("Pesanan", "Error fetching data", exception)
+//                }
+//        } else {
+//            Log.d("Pesanan", "PedagangId is null")
+//        }
+//    }
+//}
+
+
+
+
+
 package com.bornewtech.mitrapesaing.ui.order
 
 import android.content.Intent
@@ -41,6 +120,7 @@ class Pesanan : AppCompatActivity() {
                 intent.putExtra("pembeliId", orderan.pembeliId) // Mengirim pembeliId ke DetailPesanan
                 intent.putExtra("status", orderan.status) // Mengirim status ke DetailPesanan
                 intent.putExtra("totalHarga", orderan.totalHarga) // Mengirim total harga ke DetailPesanan
+                intent.putExtra("idTransaksi", orderan.idTransaksi )
                 intent.putExtra("alamatLengkap", orderan.alamatLengkap) // Mengirim alamat lengkap ke DetailPesanan
                 startActivity(intent)
             }

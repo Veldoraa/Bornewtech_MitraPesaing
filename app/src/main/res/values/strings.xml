@@ -83,4 +83,7 @@
     <string name="currentLocation">Lokasi Sekarang</string>
     <string name="upd_Location">Perbarui Lokasi</string>
     <string name="kelilingYuk">Keliling Yukk</string>
+
+    <!-- Menambahkan prompt untuk Spinner -->
+    <string name="spinner_prompt">Pilih alasan menolak pesanan</string>
 </resources>

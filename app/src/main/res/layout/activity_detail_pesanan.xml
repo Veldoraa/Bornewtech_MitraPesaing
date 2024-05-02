@@ -190,24 +190,24 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <Button
-            android:id="@+id/buttonPembayaran"
+            android:id="@+id/btnTerima"
             style="@style/OutlinedRoundedBox"
             android:layout_width="150dp"
             android:layout_height="66dp"
             android:layout_marginTop="20dp"
-            android:text="Check out"
+            android:text="Terima Pesanan"
             app:layout_constraintEnd_toStartOf="@+id/rightGuideLine"
             app:layout_constraintHorizontal_bias="0.93"
             app:layout_constraintStart_toStartOf="@+id/leftGuideLine"
             app:layout_constraintTop_toBottomOf="@+id/statusBoxContainer" />
 
         <Button
-            android:id="@+id/btnGetData"
+            android:id="@+id/btnTolakPesanan"
             style="@style/OutlinedRoundedBox"
             android:layout_width="150dp"
             android:layout_height="66dp"
             android:layout_marginTop="20dp"
-            android:text="Dapatkan Data"
+            android:text="Tolak Pesanan"
             app:layout_constraintEnd_toStartOf="@+id/rightGuideLine"
             app:layout_constraintHorizontal_bias="0.069"
             app:layout_constraintStart_toStartOf="@+id/leftGuideLine"
