@@ -258,6 +258,18 @@
                 android:inputType="text|textNoSuggestions" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <TextView
+            android:id="@+id/tvCountdownTimer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:text="Update in 300 seconds"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/currentLocProfil" />
+
         <Button
             android:id="@+id/btn_simpanProfil"
             android:layout_width="150dp"
@@ -274,23 +286,23 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/currentLocProfil" />
 
-        <Button
-            android:id="@+id/btn_getLoc"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="30dp"
-            android:layout_marginTop="15dp"
-            android:layout_weight="1"
-            android:background="@drawable/ripple_bg_button"
-            android:fontFamily="@font/roboto_medium"
-            android:text="@string/upd_Location"
-            android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toStartOf="@+id/btn_simpanProfil"
-            app:layout_constraintHorizontal_bias="0.039"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/currentLocProfil" />
+<!--        <Button-->
+<!--            android:id="@+id/btn_getLoc"-->
+<!--            android:layout_width="150dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginStart="30dp"-->
+<!--            android:layout_marginTop="15dp"-->
+<!--            android:layout_weight="1"-->
+<!--            android:background="@drawable/ripple_bg_button"-->
+<!--            android:fontFamily="@font/roboto_medium"-->
+<!--            android:text="@string/upd_Location"-->
+<!--            android:textAllCaps="false"-->
+<!--            android:textColor="@color/white"-->
+<!--            android:textSize="14sp"-->
+<!--            app:layout_constraintEnd_toStartOf="@+id/tvCountdownTimer"-->
+<!--            app:layout_constraintHorizontal_bias="0.039"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/currentLocProfil" />-->
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

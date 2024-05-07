@@ -1,6 +1,7 @@
 package com.bornewtech.mitrapesaing.maps
 
 import android.annotation.SuppressLint
+import android.app.DatePickerDialog
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -50,6 +51,8 @@ import com.google.maps.model.DirectionsRoute
 import com.google.maps.model.TravelMode
 import com.google.maps.model.Unit
 import com.google.maps.android.PolyUtil
+import java.util.Calendar
+import java.util.Date
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
@@ -60,6 +63,7 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
     private lateinit var binding: ActivityMapsBinding
+    private lateinit var calendarButton: Button
     private lateinit var myButton: Button
 //    private lateinit var myToGoogleMaps: Button
     private var heatmapData: ArrayList<Lokasi> = ArrayList()
@@ -82,6 +86,12 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
         myButton = findViewById(R.id.myButton)
         myButton.setOnClickListener {
             goToCurrentLocation()
+        }
+
+        // Tombol kalender
+        calendarButton = findViewById(R.id.calendar_button)
+        calendarButton.setOnClickListener {
+            openCalendar()
         }
 
 //        myToGoogleMaps = findViewById(R.id.myToGoogleMaps)
@@ -153,6 +163,68 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
         }
 
     }
+
+    // kalender
+    private fun openCalendar() {
+        val calendar = Calendar.getInstance()
+        val year = calendar.get(Calendar.YEAR)
+        val month = calendar.get(Calendar.MONTH)
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+        val datePickerDialog = DatePickerDialog(
+            this,
+            { _, selectedYear, selectedMonth, selectedDay ->
+                val selectedDate = Calendar.getInstance()
+                selectedDate.set(selectedYear, selectedMonth, selectedDay)
+                fetchHeatmapDataByDate(selectedDate.time)
+            },
+            year, month, day
+        )
+        datePickerDialog.show()
+    }
+
+    private fun fetchHeatmapDataByDate(selectedDate: Date) {
+        // Konversi tanggal ke timestamp
+        val timestamp = selectedDate.time / 1000 // dalam detik
+
+        // Gunakan timestamp untuk mengambil data dari Firebase
+        val reference = FirebaseDatabase.getInstance().reference.child("data")
+        val heatmapData = ArrayList<Lokasi>()
+
+        val query = reference.orderByChild("timestamp").startAt(timestamp.toDouble())
+
+        query.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                heatmapData.clear()
+
+                for (snapshot in dataSnapshot.children) {
+                    val cluster = snapshot.child("cluster").getValue(Int::class.java) ?: 0
+                    val latitude = snapshot.child("lat").getValue(Double::class.java) ?: 0.0
+                    val longitude = snapshot.child("lng").getValue(Double::class.java) ?: 0.0
+                    val weight = snapshot.child("weight").getValue(Double::class.java) ?: 0.0
+
+                    heatmapData.add(Lokasi(latitude, longitude, weight, cluster))
+                }
+
+                this@Maps.heatmapData = heatmapData
+
+                if (heatmapData.isNotEmpty()) {
+                    val heatmapProvider = HeatmapTileProvider.Builder()
+                        .weightedData(heatmapData.map { WeightedLatLng(LatLng(it.latitude, it.longitude), it.weight) })
+                        .radius(20)
+                        .maxIntensity(10.0)
+                        .build()
+                    mMap.addTileOverlay(TileOverlayOptions().tileProvider(heatmapProvider))
+                } else {
+                    Toast.makeText(this@Maps, "Tidak ada data untuk tanggal ini", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("Firebase", "Error: ${error.message}")
+            }
+        })
+    } //
 
     //tambah marker
     private fun addCustomMarker(position: LatLng, title: String) {
@@ -315,7 +387,7 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
                         val roundedDistance = Math.round(distance * 1000 * 100.0) / 100.0
                         alertDialogBuilder.setTitle("Lokasi Yang Anda Pilih")
 //                        alertDialogBuilder.setMessage("Latitude: ${selectedLocation.latitude}, Longitude: ${selectedLocation.longitude}\nAddress: ${address.getAddressLine(0)}")
-                        val message = "Jarak menuju titik tersebut adalah : <b>${roundedDistance} KM</b><br/>Address: ${address.getAddressLine(0)}"
+                        val message = "<b>Jarak menuju titik tersebut adalah: ${roundedDistance} Meter.</b><br/>Jalan: ${address.getAddressLine(0)}"
                         alertDialogBuilder.setMessage(Html.fromHtml(message))
                         alertDialogBuilder.setPositiveButton("Menuju Rute") { _, _ ->
                             // Open Google Maps for navigation

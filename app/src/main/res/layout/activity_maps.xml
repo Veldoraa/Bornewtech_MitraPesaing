@@ -32,8 +32,8 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="132dp"
-        android:layout_marginEnd="132dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="218dp"
         android:layout_marginBottom="25dp"
         android:text="@string/kelilingYuk" />
 
@@ -49,4 +49,15 @@
         android:layout_marginTop="50dp"
         android:layout_marginEnd="25dp"
         android:layout_marginBottom="592dp" />
+
+    <!-- Tombol untuk membuka dialog kalender -->
+    <Button
+        android:id="@+id/calendar_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pilih Tanggal"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="40dp"
+        android:layout_marginBottom="25dp" />
 </RelativeLayout>
