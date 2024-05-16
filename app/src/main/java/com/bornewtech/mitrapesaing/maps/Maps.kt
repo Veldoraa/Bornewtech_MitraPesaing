@@ -70,6 +70,9 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
     private var titikClusterTinggi: ArrayList<Lokasi> = ArrayList()
 //    private var radiusCircle: Circle? = null
     private lateinit var apiKey: String // Variabel untuk menyimpan kunci API
+    private var isSelectingEndDate = false
+    private var startDate: Date? = null
+    private var endDate: Date? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,10 +92,10 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
         }
 
         // Tombol kalender
-        calendarButton = findViewById(R.id.calendar_button)
-        calendarButton.setOnClickListener {
-            openCalendar()
-        }
+//        calendarButton = findViewById(R.id.calendar_button)
+//        calendarButton.setOnClickListener {
+//            openCalendar()
+//        }
 
 //        myToGoogleMaps = findViewById(R.id.myToGoogleMaps)
 //        myToGoogleMaps.setOnClickListener {
@@ -115,7 +118,7 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
 
         val spinner: Spinner = findViewById(R.id.dropdown_menu)
 
-        val items = listOf("3 Hari", "7 Hari", "30 Hari", "Semua Data")
+        val items = listOf("3 Hari", "7 Hari", "30 Hari", "Semua Data", "Pilih Tanggal")
         val currentTimeStamp = System.currentTimeMillis() / 1000 // Ubah ke detik
         val threeDaysAgo = currentTimeStamp - (3 * 24 * 60 * 60)
         val sevenDaysAgo = currentTimeStamp - (7 * 24 * 60 * 60)
@@ -153,6 +156,15 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
                         addHeatmap(alldata)
                         Toast.makeText(applicationContext, "Kategori 4 dipilih", Toast.LENGTH_SHORT).show()
                     }
+                    "Pilih Tanggal" -> {
+                        if (!isSelectingEndDate) {
+                            openCalendar()
+                            isSelectingEndDate = true
+                            Toast.makeText(applicationContext, "Pilih tanggal awal", Toast.LENGTH_SHORT).show()
+                        } else {
+                            isSelectingEndDate = false
+                        }
+                    }
                 }
             }
 
@@ -176,22 +188,40 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
             { _, selectedYear, selectedMonth, selectedDay ->
                 val selectedDate = Calendar.getInstance()
                 selectedDate.set(selectedYear, selectedMonth, selectedDay)
-                fetchHeatmapDataByDate(selectedDate.time)
+                if (startDate == null) {
+                    startDate = selectedDate.time
+                    openCalendar() // Buka kembali kalender untuk memilih tanggal akhir
+                } else {
+                    endDate = selectedDate.time
+                    fetchHeatmapDataByDateRange(startDate!!, endDate!!)
+                    startDate = null
+                    endDate = null
+                }
             },
             year, month, day
         )
-        datePickerDialog.show()
+        if (startDate == null) {
+            datePickerDialog.show()
+        } else {
+            datePickerDialog.datePicker.minDate = startDate!!.time
+            datePickerDialog.show()
+        }
     }
 
-    private fun fetchHeatmapDataByDate(selectedDate: Date) {
-        // Konversi tanggal ke timestamp
-        val timestamp = selectedDate.time / 1000 // dalam detik
+    private fun fetchHeatmapDataByDateRange(startDate: Date, endDate: Date) {
+        // Konversi tanggal awal ke timestamp
+        val startTimestamp = startDate.time / 1000 // dalam detik
+        val endTimestamp = endDate.time / 1000 // dalam detik
 
         // Gunakan timestamp untuk mengambil data dari Firebase
         val reference = FirebaseDatabase.getInstance().reference.child("data")
         val heatmapData = ArrayList<Lokasi>()
+        mMap.clear()
 
-        val query = reference.orderByChild("timestamp").startAt(timestamp.toDouble())
+        val query = reference.orderByChild("timestamp")
+            .startAt(startTimestamp.toDouble())
+            .endAt(endTimestamp.toDouble())
+
 
         query.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -246,6 +276,28 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
+    // Define a function to cluster the points based on a certain distance
+    fun clusterPoints(points: List<Lokasi>, center: LatLng, radius: Double): List<List<Lokasi>> {
+        val clusters = mutableListOf<MutableList<Lokasi>>()
+
+        points.forEach { point ->
+            var added = false
+            clusters.forEach { cluster ->
+                if (hitungJarak(point.latitude, point.longitude, center.latitude, center.longitude) <= radius) {
+                    cluster.add(point)
+                    added = true
+                }
+            }
+            if (!added) {
+                val newCluster = mutableListOf(point)
+                clusters.add(newCluster)
+            }
+        }
+
+        return clusters
+    }
+
+
     @SuppressLint("PotentialBehaviorOverride")
     private fun goToCurrentLocation() {
         if (ContextCompat.checkSelfPermission(
@@ -276,12 +328,14 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
                 if (titikTerdekat != null) {
                     // Hapus semua marker sebelum menambahkan yang baru
                     mMap.clear()
+                    // Cluster the points within a 500-meter radius into separate clusters
+                    val clusteredPoints = clusterPoints(titikClusterTinggi, currentLocation, 500.0)
 
                     // Tambahkan marker untuk titik terdekat
-                    addCustomMarker(
-                        LatLng(titikTerdekat.latitude, titikTerdekat.longitude),
-                        "Titik Terdekat"
-                    )
+//                    addCustomMarker(
+//                        LatLng(titikTerdekat.latitude, titikTerdekat.longitude),
+//                        "Titik Terdekat"
+//                    )
 
                     // Get the 3 nearest points within a 500-meter radius
                     val nearestPoints = titikClusterTinggi.filter {
@@ -298,9 +352,10 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
                             it.latitude,
                             it.longitude
                         )
-                    }.take(3)
+                    }.take(5)
 
-                    // Add markers for the 3 nearest points
+
+                    // Add markers for the 5 nearest points
                     addMarkersForNearestPoints(currentLocation, nearestPoints)
 
                     // Set marker click listener
@@ -373,7 +428,7 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
     private fun showSelectedMarkerInfo(selectedLocation: Lokasi?) {
         // Handle the click event for the selected marker, e.g., show details
         if (selectedLocation != null) {
-            val currentLocation = mMap.myLocation
+            val currentLocation = mMap. myLocation
             val alertDialogBuilder = AlertDialog.Builder(this)
             val distance = hitungJarak(currentLocation.latitude, currentLocation.longitude, selectedLocation.latitude, selectedLocation.longitude)
             val geocoder = Geocoder(this)
