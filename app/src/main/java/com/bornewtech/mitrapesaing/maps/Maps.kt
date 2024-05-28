@@ -51,6 +51,7 @@ import com.google.maps.model.DirectionsRoute
 import com.google.maps.model.TravelMode
 import com.google.maps.model.Unit
 import com.google.maps.android.PolyUtil
+import com.google.maps.android.heatmaps.Gradient
 import java.util.Calendar
 import java.util.Date
 import kotlin.math.atan2
@@ -65,10 +66,10 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var binding: ActivityMapsBinding
     private lateinit var calendarButton: Button
     private lateinit var myButton: Button
-//    private lateinit var myToGoogleMaps: Button
+    //    private lateinit var myToGoogleMaps: Button
     private var heatmapData: ArrayList<Lokasi> = ArrayList()
     private var titikClusterTinggi: ArrayList<Lokasi> = ArrayList()
-//    private var radiusCircle: Circle? = null
+    //    private var radiusCircle: Circle? = null
     private lateinit var apiKey: String // Variabel untuk menyimpan kunci API
     private var isSelectingEndDate = false
     private var startDate: Date? = null
@@ -222,6 +223,18 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
             .startAt(startTimestamp.toDouble())
             .endAt(endTimestamp.toDouble())
 
+        // Define colors for the gradient
+        val colors = intArrayOf(
+            Color.GREEN,  // Starting color (for lower weights)
+            Color.YELLOW, // Intermediate color
+            Color.RED     // Ending color (for higher weights)
+        )
+
+        // Define the start points for the colors (0..1)
+        val startPoints = floatArrayOf(0.2f, 0.5f, 1f)
+
+        // Create the gradient
+        val gradient = Gradient(colors, startPoints)
 
         query.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -236,11 +249,14 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
                     heatmapData.add(Lokasi(latitude, longitude, weight, cluster))
                 }
 
+
+
                 this@Maps.heatmapData = heatmapData
 
                 if (heatmapData.isNotEmpty()) {
                     val heatmapProvider = HeatmapTileProvider.Builder()
                         .weightedData(heatmapData.map { WeightedLatLng(LatLng(it.latitude, it.longitude), it.weight) })
+                        .gradient(gradient)
                         .radius(20)
                         .maxIntensity(10.0)
                         .build()
