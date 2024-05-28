@@ -9,6 +9,7 @@ import android.widget.Toast
 import com.bornewtech.mitrapesaing.R
 import com.google.firebase.firestore.FirebaseFirestore
 import android.util.Log
+import com.google.firebase.auth.FirebaseAuth
 
 class TolakPesanan : AppCompatActivity() {
 
@@ -17,6 +18,7 @@ class TolakPesanan : AppCompatActivity() {
     private lateinit var firestore: FirebaseFirestore
     private lateinit var pembeliId: String
     private lateinit var idTransaksi: String
+    private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,9 +26,10 @@ class TolakPesanan : AppCompatActivity() {
         supportActionBar?.hide()
 
         firestore = FirebaseFirestore.getInstance()
+        auth = FirebaseAuth.getInstance()
 
         pembeliId = intent.getStringExtra("pembeliId") ?: ""
-        idTransaksi = intent.getStringExtra("idTransaksi") ?: "" // Pastikan ini ada
+        idTransaksi = intent.getStringExtra("idTransaksi") ?: ""
 
         Log.d(TAG, "Data diterima: pembeliId=$pembeliId, idTransaksi=$idTransaksi")
 
@@ -50,28 +53,214 @@ class TolakPesanan : AppCompatActivity() {
     }
 
     private fun recordFraudReason() {
-        Log.d(TAG, "Mencatat penolakan dengan pembeliId=$pembeliId dan idTransaksi=$idTransaksi")
-
-        val data = hashMapOf(
-            "reason" to "Karena Menipu",
-            "timestamp" to System.currentTimeMillis(),
-            "pembeliId" to pembeliId,
-            "idTransaksi" to idTransaksi
-        )
+        val pedagangId = auth.currentUser?.uid ?: return // Mendapatkan UID pedagang yang sedang login
 
         firestore.collection("TolakPesanan")
-            .document(pembeliId) // Menggunakan pembeliId sebagai document ID
-            .set(data) // Menggunakan set() untuk menggantikan/memperbarui data
-            .addOnSuccessListener {
-                Log.d(TAG, "Data berhasil disimpan dengan ID: $pembeliId")
-                Toast.makeText(this, "Data berhasil disimpan dengan ID: $pembeliId", Toast.LENGTH_SHORT).show()
+            .document(pedagangId) // Menggunakan pedagangId sebagai ID dokumen
+            .get()
+            .addOnSuccessListener { document ->
+                val currentStage = document.getLong("suspensionStage") ?: 0
+                val newStage = currentStage + 1
+
+                val data = hashMapOf(
+                    "reason" to "Karena Menipu",
+                    "timestamp" to System.currentTimeMillis(),
+                    "pembeliId" to pembeliId,
+                    "idTransaksi" to idTransaksi,
+                    "suspensionStage" to newStage
+                )
+
+                firestore.collection("TolakPesanan")
+                    .document(pedagangId) // Menggunakan pedagangId sebagai ID dokumen
+                    .set(data)
+                    .addOnSuccessListener {
+                        Log.d(TAG, "Data berhasil disimpan dengan ID: $pedagangId")
+                        Toast.makeText(this, "Data berhasil disimpan dengan ID: $pedagangId", Toast.LENGTH_SHORT).show()
+                    }
+                    .addOnFailureListener { exception ->
+                        Log.e(TAG, "Gagal menyimpan data: ${exception.message}", exception)
+                        Toast.makeText(this, "Gagal menyimpan data: ${exception.message}", Toast.LENGTH_SHORT).show()
+                    }
             }
             .addOnFailureListener { exception ->
-                Log.e(TAG, "Gagal menyimpan data: ${exception.message}", exception)
-                Toast.makeText(this, "Gagal menyimpan data: ${exception.message}", Toast.LENGTH_SHORT).show()
+                Log.e(TAG, "Gagal mengambil data: ${exception.message}", exception)
+                Toast.makeText(this, "Gagal mengambil data: ${exception.message}", Toast.LENGTH_SHORT).show()
             }
     }
 }
+
+
+
+//package com.bornewtech.mitrapesaing.ui.order
+//
+//import androidx.appcompat.app.AppCompatActivity
+//import android.os.Bundle
+//import android.widget.ArrayAdapter
+//import android.widget.Spinner
+//import android.widget.Button
+//import android.widget.Toast
+//import com.bornewtech.mitrapesaing.R
+//import com.google.firebase.firestore.FirebaseFirestore
+//import android.util.Log
+//import com.google.firebase.auth.FirebaseAuth
+//
+//class TolakPesanan : AppCompatActivity() {
+//
+//    private val TAG = "TolakPesanan"
+//
+//    private lateinit var firestore: FirebaseFirestore
+//    private lateinit var pembeliId: String
+//    private lateinit var idTransaksi: String
+//    private lateinit var auth: FirebaseAuth
+//
+//    override fun onCreate(savedInstanceState: Bundle?) {
+//        super.onCreate(savedInstanceState)
+//        setContentView(R.layout.activity_tolak_pesanan)
+//        supportActionBar?.hide()
+//
+//        firestore = FirebaseFirestore.getInstance()
+//        auth = FirebaseAuth.getInstance()
+//
+//        pembeliId = intent.getStringExtra("pembeliId") ?: ""
+//        idTransaksi = intent.getStringExtra("idTransaksi") ?: ""
+//
+//        Log.d(TAG, "Data diterima: pembeliId=$pembeliId, idTransaksi=$idTransaksi")
+//
+//        val spinnerAlasan = findViewById<Spinner>(R.id.spinnerAlasan)
+//
+//        val alasanMenolak = arrayOf("Karena Jauh", "Karena Menipu", "Karena Stok Habis")
+//        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, alasanMenolak)
+//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+//        spinnerAlasan.adapter = adapter
+//
+//        val buttonSelesai = findViewById<Button>(R.id.buttonSelesai)
+//
+//        buttonSelesai.setOnClickListener {
+//            val selectedAlasan = spinnerAlasan.selectedItem.toString()
+//            Toast.makeText(this, "Menolak pesanan karena: $selectedAlasan", Toast.LENGTH_SHORT).show()
+//
+//            if (selectedAlasan == "Karena Menipu") {
+//                recordFraudReason() // Catat alasan
+//            }
+//        }
+//    }
+//
+//    private fun recordFraudReason() {
+//        val pedagangId = auth.currentUser?.uid ?: return // Mendapatkan UID pedagang yang sedang login
+//
+//        firestore.collection("TolakPesanan")
+//            .document(pedagangId)
+//            .get()
+//            .addOnSuccessListener { document ->
+//                val currentStage = document.getLong("suspensionStage") ?: 0
+//                val newStage = currentStage + 1
+//
+//                val data = hashMapOf(
+//                    "reason" to "Karena Menipu",
+//                    "timestamp" to System.currentTimeMillis(),
+//                    "pembeliId" to pembeliId,
+//                    "idTransaksi" to idTransaksi,
+//                    "suspensionStage" to newStage
+//                )
+//
+//                firestore.collection("TolakPesanan")
+//                    .document(pedagangId)
+//                    .set(data)
+//                    .addOnSuccessListener {
+//                        Log.d(TAG, "Data berhasil disimpan dengan ID: $pedagangId")
+//                        Toast.makeText(this, "Data berhasil disimpan dengan ID: $pedagangId", Toast.LENGTH_SHORT).show()
+//                    }
+//                    .addOnFailureListener { exception ->
+//                        Log.e(TAG, "Gagal menyimpan data: ${exception.message}", exception)
+//                        Toast.makeText(this, "Gagal menyimpan data: ${exception.message}", Toast.LENGTH_SHORT).show()
+//                    }
+//            }
+//            .addOnFailureListener { exception ->
+//                Log.e(TAG, "Gagal mengambil data: ${exception.message}", exception)
+//                Toast.makeText(this, "Gagal mengambil data: ${exception.message}", Toast.LENGTH_SHORT).show()
+//            }
+//    }
+//}
+
+
+
+
+
+
+//package com.bornewtech.mitrapesaing.ui.order
+//
+//import androidx.appcompat.app.AppCompatActivity
+//import android.os.Bundle
+//import android.widget.ArrayAdapter
+//import android.widget.Spinner
+//import android.widget.Button
+//import android.widget.Toast
+//import com.bornewtech.mitrapesaing.R
+//import com.google.firebase.firestore.FirebaseFirestore
+//import android.util.Log
+//
+//class TolakPesanan : AppCompatActivity() {
+//
+//    private val TAG = "TolakPesanan"
+//
+//    private lateinit var firestore: FirebaseFirestore
+//    private lateinit var pembeliId: String
+//    private lateinit var idTransaksi: String
+//
+//    override fun onCreate(savedInstanceState: Bundle?) {
+//        super.onCreate(savedInstanceState)
+//        setContentView(R.layout.activity_tolak_pesanan)
+//        supportActionBar?.hide()
+//
+//        firestore = FirebaseFirestore.getInstance()
+//
+//        pembeliId = intent.getStringExtra("pembeliId") ?: ""
+//        idTransaksi = intent.getStringExtra("idTransaksi") ?: "" // Pastikan ini ada
+//
+//        Log.d(TAG, "Data diterima: pembeliId=$pembeliId, idTransaksi=$idTransaksi")
+//
+//        val spinnerAlasan = findViewById<Spinner>(R.id.spinnerAlasan)
+//
+//        val alasanMenolak = arrayOf("Karena Jauh", "Karena Menipu", "Karena Stok Habis")
+//        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, alasanMenolak)
+//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+//        spinnerAlasan.adapter = adapter
+//
+//        val buttonSelesai = findViewById<Button>(R.id.buttonSelesai)
+//
+//        buttonSelesai.setOnClickListener {
+//            val selectedAlasan = spinnerAlasan.selectedItem.toString()
+//            Toast.makeText(this, "Menolak pesanan karena: $selectedAlasan", Toast.LENGTH_SHORT).show()
+//
+//            if (selectedAlasan == "Karena Menipu") {
+//                recordFraudReason() // Catat alasan
+//            }
+//        }
+//    }
+//
+//    private fun recordFraudReason() {
+//        Log.d(TAG, "Mencatat penolakan dengan pembeliId=$pembeliId dan idTransaksi=$idTransaksi")
+//
+//        val data = hashMapOf(
+//            "reason" to "Karena Menipu",
+//            "timestamp" to System.currentTimeMillis(),//Date()
+//            "pembeliId" to pembeliId,
+//            "idTransaksi" to idTransaksi
+//        )
+//
+//        firestore.collection("TolakPesanan")
+//            .document(pembeliId) // Menggunakan pembeliId sebagai document ID
+//            .set(data) // Menggunakan set() untuk menggantikan/memperbarui data
+//            .addOnSuccessListener {
+//                Log.d(TAG, "Data berhasil disimpan dengan ID: $pembeliId")
+//                Toast.makeText(this, "Data berhasil disimpan dengan ID: $pembeliId", Toast.LENGTH_SHORT).show()
+//            }
+//            .addOnFailureListener { exception ->
+//                Log.e(TAG, "Gagal menyimpan data: ${exception.message}", exception)
+//                Toast.makeText(this, "Gagal menyimpan data: ${exception.message}", Toast.LENGTH_SHORT).show()
+//            }
+//    }
+//}
 
 
 //package com.bornewtech.mitrapesaing.ui.order
