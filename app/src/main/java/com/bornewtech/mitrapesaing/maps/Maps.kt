@@ -240,7 +240,7 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
         )
 
         // Define the start points for the colors (0..1)
-        val startPoints = floatArrayOf(0.2f, 0.5f, 1f)
+        val startPoints = floatArrayOf(0.4f, 0.6f, 1.0f)
 
         // Create the gradient
         val gradient = Gradient(colors, startPoints)
@@ -336,7 +336,7 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15f))
 
                 val titikClusterFiltered = heatmapData.filter { Lokasi ->
-                    Lokasi.weight > 10
+                    Lokasi.weight > 1
                 }
 
                 titikClusterTinggi = titikClusterFiltered as ArrayList<Lokasi>
@@ -594,8 +594,21 @@ class Maps : AppCompatActivity(), OnMapReadyCallback {
                 this@Maps.heatmapData = heatmapData
 
                 if (heatmapData.isNotEmpty()) {
+                    val colors = intArrayOf(
+                        Color.rgb(0, 255, 0),    // Green
+                        Color.rgb(255, 255, 0),  // Yellow
+                        Color.rgb(255, 0, 0)     // Red
+                    )
+
+                    // Define the start points for the gradient colors
+                    val startPoints = floatArrayOf(0.4f, 0.6f, 1.0f)
+
+                    // Create the gradient
+                    val gradient = Gradient(colors, startPoints)
+
                     val heatmapProvider = HeatmapTileProvider.Builder()
                         .weightedData(heatmapData.map { WeightedLatLng(LatLng(it.latitude, it.longitude), it.weight) })
+                        .gradient(gradient)
                         .radius(20)
                         .maxIntensity(10.0)
                         .build()

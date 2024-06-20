@@ -9,7 +9,7 @@ plugins {
 android {
     signingConfigs {
         debug {
-            storeFile file('D:\\Skripsi Yuan\\Pesaing\\keystore\\mitrapesaing\\mitraPesaing.jks')
+            storeFile file('D:\\coba_baca\\Bornew_MitraPesaing\\mitraPesaing.jks')
             storePassword 'M1tr4P3s4iNG'
             keyAlias 'keymitra'
             keyPassword 'M1tr4P3s4iNG'
